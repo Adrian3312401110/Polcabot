@@ -388,7 +388,7 @@
       top: 70px; left: 0;
       width: 260px;
       height: calc(100vh - 70px);
-      padding: 80px 20px 20px 20px;
+      padding: 30px 20px;
       transition: background 0.3s ease, transform 0.3s ease;
       z-index: 999;
       overflow-y: auto;
@@ -401,27 +401,23 @@
     }
 
     .sidebar-section {
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
     .sidebar-section h3 {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: bold;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
       opacity: 0.7;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
     .sidebar-menu {
       list-style: none;
     }
     .sidebar-menu li {
-      padding: 10px 12px;
-      margin-bottom: 6px;
+      padding: 12px 15px;
+      margin-bottom: 8px;
       border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s ease;
-      font-size: 13px;
-      line-height: 1.4;
     }
     .light-mode .sidebar-menu li:hover { background: rgba(255,255,255,0.1); }
     .dark-mode .sidebar-menu li:hover { background: rgba(255,255,255,0.05); }
@@ -512,12 +508,6 @@
       font-size: 42px;
       margin-bottom: 20px;
     }
-    .light-mode .welcome-section h1 .dark-text {
-      color: #333;
-    }
-    .dark-mode .welcome-section h1 .dark-text {
-      color: white;
-    }
     .welcome-section .subtitle {
       font-size: 18px;
       margin-bottom: 40px;
@@ -527,7 +517,7 @@
     /* Quick Action Cards */
     .quick-actions {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       margin: 40px 0;
       max-width: 1000px;
@@ -743,10 +733,6 @@
       z-index: 1001;
       font-size: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      transition: left 0.3s ease;
-    }
-    .sidebar.hidden ~ .menu-toggle {
-      left: 15px;
     }
 
     /* Responsive */
@@ -773,7 +759,7 @@
     <!-- Navbar -->
     <nav>
       <div class="logo" style="display: flex; align-items: center; gap: 10px;">
-        <img src="images/logo.png" alt="PolCaBot Logo" style="height:40px;">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="PolCaBot Logo" style="height:40px;">
         <span style="font-weight: bold; font-size: 20px;">
           <span style="color:white;">P</span><span style="color:orange;">o</span><span style="color:white;">l</span><span style="color:#1e90ff;">CaBot</span>
         </span>
@@ -911,7 +897,7 @@
     <!-- Topbar -->
     <div class="topbar">
       <div class="logo">
-        <img src="images/logo.png" alt="PolCaBot Logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="PolCaBot Logo">
         <span>
           <span style="color:white;">P</span><span style="color:orange;">o</span><span style="color:white;">l</span><span style="color:#90e0ef;">CaBot</span>
         </span>
@@ -929,7 +915,6 @@
           <li>Ada Organisasi apa saja di Polibatam</li>
           <li>Ada jurusan apa saja di Polibatam</li>
           <li>Jadwal Perkuliahan kelas pagi</li>
-          <li>Cara daftar beasiswa Polibatam</li>
         </ul>
       </div>
 
@@ -947,7 +932,7 @@
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
       <div class="welcome-section">
-        <h1>Selamat Datang di <span class="dark-text">P</span><span style="color:orange;">o</span><span class="dark-text">l</span><span style="color:#0ea5e9;">CaBot</span></h1>
+        <h1>Selamat Datang di <span style="color:#0ea5e9;">P<span style="color:orange;">o</span>lCaBot</span></h1>
         <p class="subtitle">Hai Alex Marshall, PolCaBot siap membantu menjawab segala pertanyaan akademik dari Kampus Polibatam</p>
 
         <div class="quick-actions">
@@ -962,10 +947,6 @@
           <div class="action-card">
             <h3>Jadwal Perkuliahan kelas pagi</h3>
             <p>Cek jadwal kuliah harian</p>
-          </div>
-          <div class="action-card">
-            <h3>Cara daftar beasiswa Polibatam</h3>
-            <p>Informasi lengkap beasiswa kampus</p>
           </div>
         </div>
       </div>
