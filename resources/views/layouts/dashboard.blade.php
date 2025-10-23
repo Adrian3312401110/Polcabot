@@ -6,18 +6,17 @@
 
 @section('content')
 <div class="dashboard-page active">
-    @include('dashboard.partials.topbar')
-    
-    <!-- Menu Toggle -->
+    @include('components.topbar')
+
     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-    
-    @include('dashboard.partials.sidebar')
-    
+
+    @include('components.sidebar')
+
     @yield('dashboard-content')
-    
-    @include('dashboard.partials.chat-input')
-    
-    @include('profile.modal')
+
+    @include('components.chat_input')
+
+    @include('components.modal')
 </div>
 @endsection
 

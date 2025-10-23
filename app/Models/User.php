@@ -10,19 +10,26 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * Kolom yang bisa diisi mass-assignment
+     */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
-        'nim',
-        'phone',
     ];
 
+    /**
+     * Kolom yang disembunyikan dari array/json
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Tipe data / casting kolom
+     */
     protected function casts(): array
     {
         return [
@@ -31,8 +38,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function chatHistory()
+    /**
+     * Override agar autentikasi Laravel menggunakan username, bukan email
+     */
+    public function getAuthIdentifierName()
     {
-        return $this->hasMany(ChatHistory::class);
+        return 'username';
     }
 }

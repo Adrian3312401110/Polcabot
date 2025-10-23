@@ -1,24 +1,34 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 
-// Landing Page Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/features', [HomeController::class, 'features'])->name('features');
-Route::get('/about', [HomeController::class, 'about'])->name('about');
-Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::post('/contact', [HomeController::class, 'submitContact'])->name('contact.submit');
+// Landing Page - BISA diakses siapa aja
+Route::get('/', [LandingController::class, 'index'])->name('landing_page');
 
-// Dashboard Routes
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Contact Form
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-// Profile Routes
-Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+// Guest Routes (belum login)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 
-// Chat Routes
-Route::post('/chat/send', [DashboardController::class, 'sendMessage'])->name('chat.send');
-Route::get('/chat/history', [DashboardController::class, 'history'])->name('chat.history');
+    Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+});
+
+// Auth Routes (sudah login)
+Route::middleware('auth')->group(function () {
+    // Logout - redirect ke LANDING
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::post('/chat/send', [DashboardController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/history', [DashboardController::class, 'history'])->name('chat.history');
+});

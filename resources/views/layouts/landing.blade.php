@@ -9,7 +9,7 @@
     <!-- Navbar -->
     <nav>
         <div class="logo">
-            <img src="images/logo.png" alt="PolCaBot Logo">
+            <img src="{{ asset('images/logo.png') }}" alt="PolCaBot Logo">
             <span>
                 <span style="color:white;">P</span><span style="color:orange;">o</span><span style="color:white;">l</span><span style="color:#1e90ff;">CaBot</span>
             </span>
@@ -20,14 +20,23 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
+        
+        <!-- Tombol Sign In (tampil kalau BELUM login) -->
+        @guest
+            <a href="{{ route('login') }}" class="btn-signin">Sign In</a>
+        @endguest
 
-        <!-- Tombol tanpa fungsi (tidak ada route) -->
-        <a href="#" class="btn-signin" onclick="return false;">Sign In</a>
+        <!-- Tombol Logout (tampil kalau SUDAH login) -->
+        @auth
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn-signin" style="background: #dc3545; border: none; cursor: pointer;">Logout</button>
+            </form>
+        @endauth
     </nav>
 
     @yield('landing-content')
 
-    <!-- Footer -->
     <footer>
         <p>© 2025 PolCaBot. All rights reserved.</p>
         <ul>

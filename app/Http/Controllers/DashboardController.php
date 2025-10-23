@@ -8,21 +8,21 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     /**
-     * Display dashboard page
+     * Tampilkan halaman dashboard utama
      */
     public function index()
     {
         $user = Auth::user();
-        
-        // Get chat history
+
+        // Chat history (dummy data sementara)
         $chatHistory = [
             'Ada Organisasi apa saja di Polibatam',
             'Ada jurusan apa saja di Polibatam',
             'Jadwal Perkuliahan kelas pagi',
             'Cara daftar beasiswa Polibatam'
         ];
-        
-        // Quick actions
+
+        // Quick actions di dashboard
         $quickActions = [
             [
                 'title' => 'Ada Organisasi apa saja di Polibatam',
@@ -41,12 +41,13 @@ class DashboardController extends Controller
                 'description' => 'Informasi lengkap beasiswa kampus'
             ]
         ];
-        
-        return view('dashboard.index', compact('user', 'chatHistory', 'quickActions'));
+
+        // Kirim data ke view pages.index
+        return view('pages.index', compact('user', 'chatHistory', 'quickActions'));
     }
 
     /**
-     * Send chat message
+     * Kirim pesan chat ke AI
      */
     public function sendMessage(Request $request)
     {
@@ -54,24 +55,27 @@ class DashboardController extends Controller
             'message' => 'required|string|max:1000'
         ]);
 
-        // Process AI response here
-        // $response = AIService::getResponse($validated['message']);
+        // Proses AI response (sementara dummy response)
+        // Kalau nanti mau pakai API AI bisa dihubungkan di sini
+        $response = 'Ini adalah respon dari PolCaBot untuk pesan: "' . $validated['message'] . '"';
 
         return response()->json([
             'success' => true,
-            'message' => 'Pesan terkirim',
-            'response' => 'Ini adalah response dari AI'
+            'message' => 'Pesan terkirim!',
+            'response' => $response
         ]);
     }
 
     /**
-     * Get chat history
+     * Ambil riwayat chat user
      */
     public function history()
     {
-        // Get user chat history from database
+        // Contoh data dummy — nanti bisa diganti dengan query database
         $history = [
-            // Query chat history from database
+            'Halo PolCaBot!',
+            'Apa itu Polibatam?',
+            'Bagaimana cara daftar beasiswa?'
         ];
 
         return response()->json([
