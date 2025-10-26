@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - PolCaBot</title>
+  <title>PolCaBot Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -18,35 +18,38 @@
   <!-- Main Container -->
   <div class="relative w-full max-w-6xl flex bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden">
     
-    <!-- Left Side - Brand -->
+    <!-- Left Side - Robot Image -->
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 items-center justify-center relative overflow-hidden">
-      <div class="relative z-10 text-center">
-        <div class="mb-8">
-          <img src="{{ asset('images/robot.png') }}" alt="Robot PolCaBot" class="mx-auto w-74 h-74 object-contain">
-        </div>
-        <p class="text-slate-300 text-lg">Your Smart Campus Assistant</p>
-      </div>
+      <img src="<?php echo e(asset('images/robot.png')); ?>" alt="Robot PolCaBot" class="max-w-sm" />
     </div>
 
-    <!-- Right Side - Register Form -->
+    <!-- Right Side - Login Form -->
     <div class="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center">
       <div class="w-full max-w-md mx-auto">
         
-        <h2 class="text-4xl font-bold text-slate-900 mb-2">Welcome!</h2>
-        <p class="text-slate-600 mb-8">Create your account to get started</p>
+        <h2 class="text-4xl font-bold text-slate-900 mb-2">Get Started Now</h2>
+        <p class="text-slate-600 mb-8">Welcome back! Please enter your details</p>
+
+        <!-- Success Message -->
+        <?php if(session('success')): ?>
+        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+          <?php echo e(session('success')); ?>
+
+        </div>
+        <?php endif; ?>
 
         <!-- Error Messages -->
-        @if($errors->any())
+        <?php if($errors->any()): ?>
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          @foreach($errors->all() as $error)
-            <p class="text-sm">{{ $error }}</p>
-          @endforeach
+          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <p><?php echo e($error); ?></p>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
-        @endif
+        <?php endif; ?>
 
-        <!-- Register Form -->
-        <form method="POST" action="{{ route('register.submit') }}" class="space-y-5">
-          @csrf
+        <!-- Login Form -->
+        <form method="POST" action="<?php echo e(route('login.submit')); ?>" class="space-y-5">
+          <?php echo csrf_field(); ?>
           
           <!-- Username -->
           <div>
@@ -54,9 +57,9 @@
             <input 
               type="text" 
               name="username" 
-              value="{{ old('username') }}"
+              value="<?php echo e(old('username')); ?>"
               placeholder="Enter your username"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" 
               required>
           </div>
 
@@ -66,9 +69,9 @@
             <input 
               type="email" 
               name="email" 
-              value="{{ old('email') }}"
-              placeholder="Enter your email"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+              value="<?php echo e(old('email')); ?>"
+              placeholder="Enter your Email"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" 
               required>
           </div>
 
@@ -78,35 +81,34 @@
             <input 
               type="password" 
               name="password" 
-              placeholder="Minimum 6 characters"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+              placeholder="Enter your Password"
+              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" 
               required>
           </div>
 
-          <!-- Confirm Password -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-900 mb-2">Confirm Password</label>
+          <!-- Terms Checkbox -->
+          <div class="flex items-center">
             <input 
-              type="password" 
-              name="confirmPassword" 
-              placeholder="Re-enter your password"
-              class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
-              required>
+              type="checkbox" 
+              name="agreeTerms" 
+              id="agreeTerms"
+              class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500">
+            <label for="agreeTerms" class="ml-2 text-sm text-slate-700">
+              I agree to the <span class="text-blue-600 hover:text-blue-700 font-semibold cursor-pointer">terms & policy</span>
+            </label>
           </div>
 
           <!-- Submit Button -->
           <button 
             type="submit"
             class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            Sign Up
+            Sign In
           </button>
 
-          <!-- Login Link -->
+          <!-- Register Link -->
           <p class="text-center text-slate-600">
-            Have an account?
-            <a href="{{ route('login') }}" class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">
-              Sign In
-            </a>
+            Don't have an account?
+            <a href="<?php echo e(route('register')); ?>" class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">Sign Up</a>
           </p>
         </form>
 
@@ -124,4 +126,4 @@
   </div>
 
 </body>
-</html>
+</html><?php /**PATH C:\laragon\www\Polcabot-3\resources\views/pages/login.blade.php ENDPATH**/ ?>

@@ -21,18 +21,18 @@
     <div class="sidebar-section">
         <h3>History Chat</h3>
         <ul class="sidebar-menu" id="chatHistoryList">
-            @forelse($chatHistory ?? [] as $index => $chat)
-                <li class="chat-history-item" data-chat="{{ $chat }}">
-                    <span class="chat-text">{{ $chat }}</span>
-                    <button class="delete-chat-btn" onclick="deleteChat({{ $index }})">
+            <?php $__empty_1 = true; $__currentLoopData = $chatHistory ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $chat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <li class="chat-history-item" data-chat="<?php echo e($chat); ?>">
+                    <span class="chat-text"><?php echo e($chat); ?></span>
+                    <button class="delete-chat-btn" onclick="deleteChat(<?php echo e($index); ?>)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                         </svg>
                     </button>
                 </li>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <li class="empty-state">Belum ada riwayat chat</li>
-            @endforelse
+            <?php endif; ?>
         </ul>
     </div>
 
@@ -45,7 +45,7 @@
     <!-- Profile Card -->
     <div class="profile-card" onclick="openProfile()">
         <img src="https://i.pravatar.cc/150?img=12" alt="Profile">
-        <div class="name">{{ Auth::user()->name ?? 'User' }}</div>
+        <div class="name"><?php echo e(Auth::user()->name ?? 'User'); ?></div>
     </div>
 </div>
 
@@ -194,7 +194,7 @@
 // New Chat Function
 function newChat() {
     if (confirm('Mulai chat baru? Riwayat chat saat ini akan disimpan.')) {
-        window.location.href = '{{ route("dashboard") }}';
+        window.location.href = '<?php echo e(route("dashboard")); ?>';
     }
 }
 
@@ -220,7 +220,7 @@ function deleteChat(index) {
         fetch('/chat/delete/' + index, {
             method: 'DELETE',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
             }
         })
         .then(response => response.json())
@@ -263,4 +263,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-</script>
+</script><?php /**PATH C:\laragon\www\Polcabot-3\resources\views/components/sidebar.blade.php ENDPATH**/ ?>

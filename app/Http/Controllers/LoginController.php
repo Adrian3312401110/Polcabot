@@ -48,7 +48,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             // Redirect ke dashboard
-            return redirect()->route('landing_page')->with('success', 'Login berhasil! Selamat datang, ' . $user->username);
+            return redirect()->route('dashboard')->with('success', 'Login berhasil! Selamat datang, ' . $user->username);
         }
 
         // Jika gagal, kembali dengan error
