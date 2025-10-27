@@ -6,17 +6,15 @@
 
 @section('content')
 <div class="dashboard-page active">
-    @include('components.topbar')
+  @include('components.topbar')
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  @include('components.sidebar')
 
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-
-    @include('components.sidebar')
-
+  <div class="main-content-area">
     @yield('dashboard-content')
+  </div>
 
-    @include('components.chat_input')
-
-    @include('components.modal')
+  @yield('extra-content')
 </div>
 @endsection
 
