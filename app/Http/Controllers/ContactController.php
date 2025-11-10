@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ContactController extends Controller
 {
@@ -15,7 +16,7 @@ class ContactController extends Controller
         ]);
 
         // logika kirim pesan (contoh simpan ke file/log)
-        \Log::info('Pesan Kontak:', $request->all());
+        Log::info('Pesan Kontak:', $request->all());
 
         return redirect()->back()->with('success', 'Pesan Anda telah dikirim!');
     }

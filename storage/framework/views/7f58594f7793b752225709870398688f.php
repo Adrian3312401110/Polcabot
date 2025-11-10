@@ -21,18 +21,18 @@
     <div class="sidebar-section">
         <h3>History Chat</h3>
         <ul class="sidebar-menu" id="chatHistoryList">
-            @forelse($chatHistory ?? [] as $index => $chat)
-                <li class="chat-history-item" data-chat="{{ $chat }}" onclick="loadChat(event, '{{ $chat }}')">
-                    <span class="chat-text">{{ $chat }}</span>
-                    <button class="delete-chat-btn" onclick="event.stopPropagation(); deleteChat({{ $index }})">
+            <?php $__empty_1 = true; $__currentLoopData = $chatHistory ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $chat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <li class="chat-history-item" data-chat="<?php echo e($chat); ?>" onclick="loadChat(event, '<?php echo e($chat); ?>')">
+                    <span class="chat-text"><?php echo e($chat); ?></span>
+                    <button class="delete-chat-btn" onclick="event.stopPropagation(); deleteChat(<?php echo e($index); ?>)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                         </svg>
                     </button>
                 </li>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <li class="empty-state">Belum ada riwayat chat</li>
-            @endforelse
+            <?php endif; ?>
         </ul>
     </div>
 
@@ -45,7 +45,7 @@
     <!-- Profile Card -->
     <div class="profile-card" id="profileCardBtn">
         <img src="https://i.pravatar.cc/150?img=12" alt="Profile">
-        <div class="name">{{ Auth::user()->name ?? 'User' }}</div>
+        <div class="name"><?php echo e(Auth::user()->name ?? 'User'); ?></div>
     </div>
 </div>
 
@@ -58,22 +58,22 @@
             <h2>Profile</h2>
         </div>
         <form class="profile-form" id="profileForm">
-            @csrf
+            <?php echo csrf_field(); ?>
             <div class="form-group">
                 <label>Name</label>
-                <input type="text" name="name" value="{{ Auth::user()->name ?? 'Alex Marshall' }}" required>
+                <input type="text" name="name" value="<?php echo e(Auth::user()->name ?? 'Alex Marshall'); ?>" required>
             </div>
             <div class="form-group">
                 <label>NIM</label>
-                <input type="text" name="nim" value="{{ Auth::user()->nim ?? 'alex_marshall' }}">
+                <input type="text" name="nim" value="<?php echo e(Auth::user()->nim ?? 'alex_marshall'); ?>">
             </div>
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="tel" name="phone" value="{{ Auth::user()->phone ?? '+1 915 999 9685' }}">
+                <input type="tel" name="phone" value="<?php echo e(Auth::user()->phone ?? '+1 915 999 9685'); ?>">
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" value="{{ Auth::user()->email ?? 'alexmarshall2072@gmail.com' }}" required>
+                <input type="email" name="email" value="<?php echo e(Auth::user()->email ?? 'alexmarshall2072@gmail.com'); ?>" required>
             </div>
             <div class="profile-actions">
                 <button type="submit" class="btn-save">Save</button>
@@ -528,7 +528,7 @@ console.log('Sidebar script initialized');
 // ========== NEW CHAT ==========
 function newChat() {
     if (confirm('Mulai chat baru? Riwayat chat saat ini akan disimpan.')) {
-        window.location.href = '{{ route("dashboard") }}';
+        window.location.href = '<?php echo e(route("dashboard")); ?>';
     }
 }
 
@@ -599,12 +599,12 @@ function handleLogout() {
     if (confirm('Apakah Anda yakin ingin logout?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route("logout") }}';
+        form.action = '<?php echo e(route("logout")); ?>';
         
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
-        csrfToken.value = '{{ csrf_token() }}';
+        csrfToken.value = '<?php echo e(csrf_token()); ?>';
         
         form.appendChild(csrfToken);
         document.body.appendChild(form);
@@ -663,4 +663,4 @@ window.deleteChat = deleteChat;
 window.handleLogout = handleLogout;
 
 console.log('✓ All sidebar functions exported');
-</script>
+</script><?php /**PATH C:\laragon\www\Polcabot-5\resources\views/components/sidebar.blade.php ENDPATH**/ ?>

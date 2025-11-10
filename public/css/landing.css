@@ -295,7 +295,8 @@ section {
 
 /* Contact Section */
 #contact {
-    background: #fff;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://www.polibatam.ac.id/wp-content/uploads/2024/10/Ruang-PPID-3-1024x683.jpg') no-repeat center/cover;
     flex-direction: column;
 }
 

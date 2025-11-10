@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
@@ -34,10 +36,9 @@ class AdminDashboardController extends Controller
 {
     return view('admin.profile');
 }
-
 public function updateProfile(Request $request)
 {
-    $user = auth()->user();
+    $user = Auth::user();
 
     $request->validate([
         'nama' => 'required|string|max:255',

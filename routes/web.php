@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/history', [DashboardController::class, 'history'])->name('chat.history');
 });
 
-
+// Admin Routes
 Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/pengguna', [AdminDashboardController::class, 'pengguna'])->name('admin.pengguna');

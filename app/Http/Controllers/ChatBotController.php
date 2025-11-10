@@ -16,33 +16,26 @@ class ChatBotController extends Controller
             return response()->json(['reply' => 'Pesan tidak boleh kosong.'], 400);
         }
 
-        // 🔹 Gunakan model terbaru dari daftar kamu: gemini-2.5-flash
-        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . env('GEMINI_API_KEY');
+        // 🔹 API lokal Ollama (LLaMA 3.1)
+        $apiUrl = 'http://localhost:11434/api/generate';
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($apiUrl, [
-            'contents' => [[
-                'parts' => [[
-                    'text' => "Kamu adalah PolCaBot, asisten AI ramah yang menjawab dalam Bahasa Indonesia, menggunakan format Markdown bila perlu, hanya fokus pada topik akademik di Politeknik Negeri Batam, dan menggunakan Markdown bila perlu (**tebal**, *miring*, `kode`, atau daftar).\n\nUser: " . $userMessage
-                ]]
-            ]]
+        $response = Http::post($apiUrl, [
+            'model' => 'llama3.1',
+            'prompt' => "Kamu adalah PolCaBot, asisten AI ramah yang menjawab dalam Bahasa Indonesia dengan sangat jelas dan juga bahasa inggris jika penanya memang memakai bahasa inggris atau minta pakai bahasa inggris, hanya fokus pada topik akademik di Politeknik Negeri Batam, peringatkan user jika menanyakan topik yang sensitif dan saran yang terkait, dan menggunakan Markdown bila perlu (**tebal**, *miring*, `kode`, atau daftar dan emote).\n\nUser: " . $userMessage,
+            'stream' => false,
         ]);
 
         if ($response->failed()) {
             return response()->json([
-                'reply' => 'Terjadi kesalahan saat menghubungi server Gemini.',
+                'reply' => 'Terjadi kesalahan saat menghubungi LLaMA lokal.',
                 'error_detail' => $response->json(),
-                'raw' => $response->body(),
             ], 500);
         }
 
         $data = $response->json();
+        $text = $data['response'] ?? 'Maaf, saya tidak dapat memproses permintaan Anda.';
 
-        $text = $data['candidates'][0]['content']['parts'][0]['text']
-            ?? 'Maaf, saya tidak dapat memproses permintaan Anda.';
-
-        // 🔹 Konversi Markdown ke HTML aman
+        // 🔹 Konversi Markdown ke HTML
         $converter = new CommonMarkConverter([
             'html_input' => 'escape',
             'allow_unsafe_links' => false,
