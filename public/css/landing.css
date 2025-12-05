@@ -1,0 +1,455 @@
+/* ========== LANDING PAGE STYLES ========== */
+
+.landing-page { 
+    display: block; 
+}
+
+.landing-page.hidden { 
+    display: none; 
+}
+
+/* Navbar */
+nav {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background: rgba(0, 0, 0, 0.1);
+    color: #fff;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+nav ul { 
+    list-style: none; 
+    display: flex; 
+    gap: 25px; 
+}
+
+nav ul li a {
+    color: #fff; 
+    text-decoration: none; 
+    font-weight: bold;
+}
+
+nav ul li a:hover { 
+    color: #1e90ff; 
+}
+
+.btn-signin {
+    border: 2px solid #1e90ff; 
+    border-radius: 20px;
+    padding: 8px 20px; 
+    color: #ffffff; 
+    background: transparent;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-signin:hover { 
+    background: #1e90ff; 
+    color: #fff; 
+}
+
+/* Section umum */
+section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+/* Landing Page - Home Section */
+#home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://www.polibatam.ac.id/wp-content/uploads/2023/05/Gedung.jpg') no-repeat center/cover;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.home-content {
+    max-width: 800px;
+    padding: 20px;
+}
+
+#home h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.tagline {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    color: #f0f0f0;
+}
+
+.subtext {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+}
+
+.btn-main {
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    background: #1e90ff;
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect - Tombol naik dan shadow lebih besar */
+.btn-main:hover {
+    background: #0d6efd;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+}
+
+/* Active Effect - Tombol ditekan */
+.btn-main:active {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+/* Ripple Effect saat diklik */
+.btn-main::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-main:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Features Section */
+#features {
+    position: relative;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://cdio2025arm.polibatam.ac.id/wp-content/uploads/2025/02/Techno-1-2048x1365.jpg') no-repeat center/cover;
+    padding: 200px 0 120px;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.features-title {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    font-size: 56px;
+    font-style: italic;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+}
+
+.features-container {
+    margin-top: 1px;
+    display: flex;
+    justify-content: center;
+    z-index: 2;
+    position: relative;
+}
+
+.features-box {
+    background: white;
+    border-radius: 16px;
+    padding: 60px 70px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 40px;
+    max-width: 1100px;
+    color: black;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.features-text {
+    flex: 1;
+}
+
+.features-text h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.features-text p {
+    color: #444;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.features-grid {
+    flex: 1.2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.feature-card {
+    background: #eaf6ff;
+    padding: 25px 20px;
+    border-radius: 12px;
+    text-align: left;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card .icon img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.feature-link {
+    color: #1e90ff;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.feature-link:hover {
+    text-decoration: underline;
+}
+
+/* About Section */
+#about {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://www.polibatam.ac.id/wp-content/uploads/2022/02/MG_8950-scaled.jpg') no-repeat center/cover;
+    color: white;
+    gap: 30px;
+}
+
+#about img { 
+    width: 400px; 
+    border-radius: 20px; 
+}
+
+#about .text { 
+    max-width: 500px; 
+}
+
+#about button {
+    margin-top: 20px; 
+    padding: 10px 20px;
+    background: #1e90ff; 
+    border: none; 
+    color: white; 
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Contact Section */
+#contact {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                url('https://www.polibatam.ac.id/wp-content/uploads/2024/10/Ruang-PPID-3-1024x683.jpg') no-repeat center/cover;
+    flex-direction: column;
+}
+
+.contact-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.contact-form {
+    flex: 1;
+    background: #f9f9f9;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.contact-form h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.contact-form .subtext {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #555;
+}
+
+.contact-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.contact-form button {
+    background: #1e90ff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.contact-form button:hover {
+    background: #0d6efd;
+}
+
+.contact-info {
+    flex: 1;
+    background: #111;
+    color: white;
+    padding: 40px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.contact-info h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.contact-info p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.social-icons img {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.2s ease;
+}
+
+.social-icons img:hover {
+    transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+    background: #1e90ff;
+    color: white;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer ul { 
+    list-style: none; 
+    display: flex; 
+    gap: 20px; 
+}
+
+footer a { 
+    color: white; 
+    text-decoration: none; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-wrapper {
+        flex-direction: column;
+    }
+    
+    nav {
+        padding: 15px 20px;
+    }
+    
+    nav ul {
+        display: none;
+    }
+    
+    section {
+        padding: 40px 20px;
+    }
+    
+    #home h1 {
+        font-size: 32px;
+    }
+    
+    .features-box {
+        flex-direction: column;
+        padding: 40px 30px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    #about {
+        flex-direction: column;
+    }
+    
+    #about img {
+        width: 100%;
+        max-width: 400px;
+    }
+}
