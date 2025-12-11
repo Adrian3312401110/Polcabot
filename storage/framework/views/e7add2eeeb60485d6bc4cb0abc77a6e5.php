@@ -20,7 +20,7 @@
 
     <!-- Left Side - Robot Image -->
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 items-center justify-center relative overflow-hidden">
-      <img src="{{ asset('images/robot.png') }}" alt="Robot PolCaBot" class="max-w-sm" />
+      <img src="<?php echo e(asset('images/robot.png')); ?>" alt="Robot PolCaBot" class="max-w-sm" />
     </div>
 
     <!-- Right Side - Login Form -->
@@ -31,24 +31,25 @@
         <p class="text-slate-600 mb-8">Welcome back! Please enter your details</p>
 
         <!-- Success Message -->
-        @if(session('success'))
+        <?php if(session('success')): ?>
         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-          {{ session('success') }}
+          <?php echo e(session('success')); ?>
+
         </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Error Messages -->
-        @if($errors->any())
+        <?php if($errors->any()): ?>
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          @foreach($errors->all() as $error)
-            <p>{{ $error }}</p>
-          @endforeach
+          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <p><?php echo e($error); ?></p>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
-        @endif
+        <?php endif; ?>
 
         <!-- Login Form -->
-        <form method="POST" action="{{ route('login.submit') }}" class="space-y-5">
-          @csrf
+        <form method="POST" action="<?php echo e(route('login.submit')); ?>" class="space-y-5">
+          <?php echo csrf_field(); ?>
 
           <!-- Email -->
           <div>
@@ -56,7 +57,7 @@
             <input
               type="email"
               name="email"
-              value="{{ old('email') }}"
+              value="<?php echo e(old('email')); ?>"
               placeholder="Enter your email"
               class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               required>
@@ -95,7 +96,7 @@
           <!-- Register Link -->
           <p class="text-center text-slate-600">
             Don't have an account?
-            <a href="{{ route('register') }}" class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">Sign Up</a>
+            <a href="<?php echo e(route('register')); ?>" class="text-blue-600 font-semibold hover:text-blue-700 transition-colors">Sign Up</a>
           </p>
         </form>
 
@@ -113,4 +114,4 @@
   </div>
 
 </body>
-</html>
+</html><?php /**PATH E:\Polcabot\resources\views/pages/login.blade.php ENDPATH**/ ?>

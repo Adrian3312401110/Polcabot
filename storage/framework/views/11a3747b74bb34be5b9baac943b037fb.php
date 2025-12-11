@@ -26,13 +26,13 @@
     <div class="sidebar-section">
         <h3>History Chat</h3>
         <ul class="sidebar-menu" id="chatHistoryList">
-            @forelse($chatHistory ?? [] as $index => $chat)
-                <li class="chat-history-item" data-chat="{{ $chat }}"
-                    onclick="loadChat(event, '{{ $chat }}')">
-                    <span class="chat-text">{{ $chat }}</span>
+            <?php $__empty_1 = true; $__currentLoopData = $chatHistory ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $chat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <li class="chat-history-item" data-chat="<?php echo e($chat); ?>"
+                    onclick="loadChat(event, '<?php echo e($chat); ?>')">
+                    <span class="chat-text"><?php echo e($chat); ?></span>
 
                     <button class="delete-chat-btn"
-                        onclick="event.stopPropagation(); deleteChat({{ $index }})">
+                        onclick="event.stopPropagation(); deleteChat(<?php echo e($index); ?>)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 
                             2-.9 2-2V7H6v12zM19 
@@ -41,9 +41,9 @@
                         </svg>
                     </button>
                 </li>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <li class="empty-state">Belum ada riwayat chat</li>
-            @endforelse
+            <?php endif; ?>
         </ul>
     </div>
 
@@ -56,19 +56,21 @@
 <!-- Profile Card -->
 <div class="profile-card" id="profileCardBtn">
 
-    @php
+    <?php
         $name = Auth::user()->username ?? Auth::user()->name;
         $initial = strtoupper(substr($name, 0, 1));
-    @endphp
+    ?>
 
     <!-- Avatar Inisial (sidebar) -->
     <div class="sidebar-avatar">
-        {{ $initial }}
+        <?php echo e($initial); ?>
+
     </div>
 
     <!-- Nama user -->
     <div class="name">
-        {{ Auth::user()->username ?? 'User' }}
+        <?php echo e(Auth::user()->username ?? 'User'); ?>
+
     </div>
 </div>
 </div>
@@ -80,21 +82,22 @@
 
         <div class="profile-header">
 
-            @php
+            <?php
                 $name = Auth::user()->username ?? Auth::user()->name;
                 $initial = strtoupper(substr($name, 0, 1));
-            @endphp
+            ?>
 
             <!-- Avatar Inisial (modal) -->
             <div class="profile-avatar">
-                {{ $initial }}
+                <?php echo e($initial); ?>
+
             </div>
 
             <h2>Profile</h2>
         </div>
 
         <form class="profile-form" id="profileForm">
-            @csrf
+            <?php echo csrf_field(); ?>
 
             <!-- USERNAME -->
             <div class="form-group">
@@ -102,7 +105,7 @@
                 <input 
                     type="text" 
                     name="username" 
-                    value="{{ Auth::user()->username }}" 
+                    value="<?php echo e(Auth::user()->username); ?>" 
                     required>
             </div>
 
@@ -112,7 +115,7 @@
                 <input 
                     type="email" 
                     name="email" 
-                    value="{{ Auth::user()->email }}" 
+                    value="<?php echo e(Auth::user()->email); ?>" 
                     required>
             </div>
 
@@ -147,10 +150,10 @@
 document.getElementById("profileForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    fetch("{{ route('profile.update') }}", {
+    fetch("<?php echo e(route('profile.update')); ?>", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "X-CSRF-TOKEN": "<?php echo e(csrf_token()); ?>",
             "Accept": "application/json"
         },
         body: new FormData(this)
@@ -455,7 +458,7 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 // ================= NEW CHAT =================
 function newChat() {
     if (confirm("Mulai chat baru?")) {
-        window.location.href = "{{ route('dashboard') }}";
+        window.location.href = "<?php echo e(route('dashboard')); ?>";
     }
 }
 
@@ -504,12 +507,12 @@ function handleLogout() {
     if (confirm("Yakin ingin logout?")) {
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "{{ route('logout') }}";
+        form.action = "<?php echo e(route('logout')); ?>";
 
         const csrf = document.createElement("input");
         csrf.type = "hidden";
         csrf.name = "_token";
-        csrf.value = "{{ csrf_token() }}";
+        csrf.value = "<?php echo e(csrf_token()); ?>";
 
         form.appendChild(csrf);
         document.body.appendChild(form);
@@ -601,3 +604,4 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(list, { childList: true });
 });
 </script>
+<?php /**PATH E:\Polcabot\resources\views/components/sidebar.blade.php ENDPATH**/ ?>

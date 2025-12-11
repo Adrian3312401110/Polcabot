@@ -25,8 +25,7 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'username' => 'required|string|min:3|max:255|unique:users,username',
             'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6',
-            'confirmPassword' => 'required|same:password',
+            'password' => 'required|string|min:6|confirmed',
         ], [
             'username.required' => 'Username wajib diisi!',
             'username.unique' => 'Username sudah terdaftar!',
@@ -36,8 +35,7 @@ class RegisterController extends Controller
             'email.unique' => 'Email sudah terdaftar!',
             'password.required' => 'Password wajib diisi!',
             'password.min' => 'Password minimal 6 karakter!',
-            'confirmPassword.required' => 'Konfirmasi password wajib diisi!',
-            'confirmPassword.same' => 'Password dan konfirmasi password tidak sama!',
+            'password.confirmed' => 'Password dan konfirmasi password tidak sama!',
         ]);
 
         // Buat user baru dengan password ter-hash

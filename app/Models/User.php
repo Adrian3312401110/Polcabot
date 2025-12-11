@@ -38,11 +38,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Override agar autentikasi Laravel menggunakan username, bukan email
-     */
-    public function getAuthIdentifierName()
-    {
-        return 'username';
-    }
+    // ❌ HAPUS method getAuthIdentifierName() 
+    // Supaya Laravel pakai email untuk login (default behavior)
 }
