@@ -1,5 +1,4 @@
 <div class="sidebar" id="sidebar">
-    <!-- Sidebar Header with New Chat -->
     <div class="sidebar-header">
         <button class="new-chat-btn" onclick="newChat()">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -8,8 +7,6 @@
             New Chat
         </button>
     </div>
-
-    <!-- Search Bar -->
     <div class="search-container">
         <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 
@@ -21,8 +18,6 @@
         </svg>
         <input type="text" id="searchChat" placeholder="Search chat..." oninput="searchChats(this.value)">
     </div>
-
-    <!-- History Chat Section -->
     <div class="sidebar-section">
         <h3>History Chat</h3>
         <ul class="sidebar-menu" id="chatHistoryList">
@@ -46,34 +41,24 @@
             @endforelse
         </ul>
     </div>
-
-    <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle">
         <span>🌙 Dark Mode</span>
         <div class="toggle-switch" onclick="toggleDarkMode()" id="darkModeToggle"></div>
     </div>
-
-<!-- Profile Card -->
 <div class="profile-card" id="profileCardBtn">
 
     @php
         $name = Auth::user()->username ?? Auth::user()->name;
         $initial = strtoupper(substr($name, 0, 1));
     @endphp
-
-    <!-- Avatar Inisial (sidebar) -->
     <div class="sidebar-avatar">
         {{ $initial }}
     </div>
-
-    <!-- Nama user -->
     <div class="name">
         {{ Auth::user()->username ?? 'User' }}
     </div>
 </div>
 </div>
-
-<!-- Profile Modal -->
 <div class="profile-modal" id="profileModal">
     <div class="profile-modal-content">
         <span class="close-btn" onclick="closeProfile()">&times;</span>
@@ -84,8 +69,6 @@
                 $name = Auth::user()->username ?? Auth::user()->name;
                 $initial = strtoupper(substr($name, 0, 1));
             @endphp
-
-            <!-- Avatar Inisial (modal) -->
             <div class="profile-avatar">
                 {{ $initial }}
             </div>
@@ -95,8 +78,6 @@
 
         <form class="profile-form" id="profileForm">
             @csrf
-
-            <!-- USERNAME -->
             <div class="form-group">
                 <label>Username</label>
                 <input 
@@ -105,8 +86,6 @@
                     value="{{ Auth::user()->username }}" 
                     required>
             </div>
-
-            <!-- EMAIL -->
             <div class="form-group">
                 <label>Email</label>
                 <input 
@@ -115,8 +94,6 @@
                     value="{{ Auth::user()->email }}" 
                     required>
             </div>
-
-            <!-- PASSWORD BARU -->
             <div class="form-group">
                 <label>Password Baru</label>
                 <input 
@@ -124,8 +101,6 @@
                     name="password" 
                     placeholder="Biarkan kosong jika tidak ingin mengubah password">
             </div>
-
-            <!-- KONFIRMASI PASSWORD -->
             <div class="form-group">
                 <label>Konfirmasi Password</label>
                 <input 
@@ -143,7 +118,6 @@
 </div>
 
 <script>
-// SUBMIT UPDATE PROFILE
 document.getElementById("profileForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -180,7 +154,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 
 
 <style>
-/* ========== SIDEBAR ========== */
 .sidebar {
     position: fixed;
     top: 70px;
@@ -204,16 +177,12 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 }
 
 .sidebar.hidden { transform: translateX(-100%); }
-
-/* Scrollbar */
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
 .sidebar::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.2);
     border-radius: 3px;
 }
-
-/* Header */
 .sidebar-header { padding: 0 5px 20px; }
 
 .new-chat-btn {
@@ -221,22 +190,27 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
+    gap: 6px;
+
+    padding: 8px 12px;      /* ⬅️ lebih kecil */
     background: rgba(255,255,255,0.15);
     border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
+    border-radius: 6px;     /* ⬅️ lebih ramping */
     color: white;
-    font-size: 14px;
-    font-weight: 600;
+
+    font-size: 12px;        /* ⬅️ kecilin teks */
+    font-weight: 500;
     cursor: pointer;
+}
+
+.new-chat-btn svg {
+    width: 14px;
+    height: 14px;
 }
 
 .new-chat-btn:hover {
     background: rgba(255,255,255,0.25);
 }
-
-/* Search */
 .search-container {
     position: relative;
     margin-bottom: 20px;
@@ -260,8 +234,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.15);
 }
-
-/* Chat List */
 .sidebar-section { margin-bottom: 25px; }
 
 .sidebar-section h3 {
@@ -292,8 +264,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 }
 
 .chat-history-item.hidden { display: none; }
-
-/* Delete button */
 .delete-chat-btn {
     display: none;
     width: 28px;
@@ -310,7 +280,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     justify-content: center;
 }
 
-/* Dark mode toggle */
 .dark-mode-toggle {
     display: flex;
     justify-content: space-between;
@@ -344,7 +313,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     transform: translateX(25px);
 }
 
-/* Profile Card */
 .profile-card {
     padding: 15px;
     border-radius: 8px;
@@ -365,7 +333,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     border-radius: 50%;
 }
 
-/* Modal */
 .profile-modal {
     position: fixed;
     top: 0; left: 0;
@@ -404,7 +371,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     color: white;
 }
 
-/* Form */
 .profile-form { display: flex; flex-direction: column; gap: 20px; }
 
 .profile-actions {
@@ -444,7 +410,6 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
         margin: 0 auto 10px;
     }
 
-/* Mobile */
 @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }
     .sidebar.active { transform: translateX(0); }
@@ -452,14 +417,12 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 </style>
 
 <script>
-// ================= NEW CHAT =================
 function newChat() {
     if (confirm("Mulai chat baru?")) {
         window.location.href = "{{ route('dashboard') }}";
     }
 }
 
-// ================= SEARCH =================
 function searchChats(q) {
     q = q.toLowerCase();
     document.querySelectorAll('.chat-history-item').forEach(item => {
@@ -468,7 +431,6 @@ function searchChats(q) {
     });
 }
 
-// ================= LOAD CHAT =================
 function loadChat(event, text) {
     const input = document.getElementById('chatInput');
     if (input) {
@@ -477,7 +439,6 @@ function loadChat(event, text) {
     }
 }
 
-// ================= DELETE CHAT =================
 function deleteChat(index) {
     if (!confirm("Hapus chat ini?")) return;
 
@@ -490,7 +451,6 @@ function deleteChat(index) {
     }
 }
 
-// ================= PROFILE =================
 function openProfile() {
     document.getElementById('profileModal').classList.add('active');
 }
@@ -499,7 +459,6 @@ function closeProfile() {
     document.getElementById('profileModal').classList.remove('active');
 }
 
-// ================= LOGOUT =================
 function handleLogout() {
     if (confirm("Yakin ingin logout?")) {
         const form = document.createElement("form");
@@ -517,7 +476,6 @@ function handleLogout() {
     }
 }
 
-// ================= DARK MODE =================
 document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
     const toggle = document.getElementById("darkModeToggle");
@@ -544,7 +502,6 @@ function toggleDarkMode() {
     localStorage.setItem("theme", isDark ? "light" : "dark");
 }
 
-// ================= INTERACTIONS =================
 document.addEventListener("DOMContentLoaded", () => {
     const card = document.getElementById("profileCardBtn");
     if (card) {
@@ -563,7 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ================= LOCAL STORAGE HISTORY =================
 document.addEventListener("DOMContentLoaded", () => {
     const list = document.getElementById('chatHistoryList');
 
