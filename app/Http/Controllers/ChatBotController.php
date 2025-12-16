@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -13,19 +12,15 @@ use LucianoTonet\GroqLaravel\Facades\Groq;
 
 class ChatBotController extends Controller
 {
-    /**
-     * Tampilkan halaman training AI
-     */
     public function showTraining()
     {
         return view('admin.training');
     }
 
-    /**
-     * Handle chat message
-     */
     public function chat(Request $request)
     {
+        Log::info('🚀 NEW IMPROVED MATCHING CODE LOADED');
+        
         $userMessage = trim($request->input('message', ''));
 
         if (!$userMessage) {
@@ -34,425 +29,383 @@ class ChatBotController extends Controller
 
         Log::info('💬 User Question: ' . $userMessage);
 
-        /* ===========================================================
-         * 1. IMPROVED KNOWLEDGE BASE SEARCH
-         * =========================================================== */
-        $answer = $this->searchKnowledgeBase($userMessage);
-        
-        if ($answer) {
-            Log::info('✅ Answer found in Knowledge Base');
-            
-            $formattedAnswer = nl2br(e($answer['answer'])) .
-                "<br><br><small><b>📌 Sumber:</b> " .
-                "<a href='" . e($answer['source']) . "' target='_blank' rel='noopener noreferrer'>" . 
-                e($answer['source']) . "</a></small>";
+        $answer = $this->searchKnowledgeBaseStrict($userMessage);
 
-            // Simpan history
-            $this->saveChatHistoryIfAuth(Auth::id(), $userMessage, strip_tags($answer['answer']));
+        if ($answer) {
+            Log::info('✅ STRICT KB MATCH FOUND');
+
+            $this->saveChatHistoryIfAuth(
+                Auth::id(),
+                $userMessage,
+                strip_tags($answer['answer'])
+            );
 
             return response()->json([
-                'reply' => $formattedAnswer,
+                'reply' => nl2br(e($answer['answer'])) .
+                    "<br><br><small><b>📌 Sumber:</b> " .
+                    "<a href='{$answer['source']}' target='_blank'>{$answer['source']}</a></small>",
                 'source' => 'knowledge_base'
             ]);
         }
 
-        Log::info('⚠️ Not found in KB, trying Groq API...');
+        Log::info('⚠️ No strict KB match, fallback to Groq');
 
-        /* ===========================================================
-         * 2. FALLBACK KE GROQ API
-         * =========================================================== */
+        return $this->callGroq($userMessage);
+    }
+
+    /* ==========================================================
+     * STRICT KNOWLEDGE BASE SEARCH
+     * SEMUA KEYWORD DI DATASET HARUS ADA DI PERTANYAAN USER
+     * ========================================================== */
+    private function searchKnowledgeBaseStrict(string $userMessage)
+    {
+        $normalized = $this->normalizeText($userMessage);
+        $userKeywords = $this->extractKeywords($normalized);
+
+        Log::info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        Log::info('🔑 User Message: ' . $userMessage);
+        Log::info('🔑 Normalized: ' . $normalized);
+        Log::info('🔑 User Keywords: [' . implode(', ', $userKeywords) . ']');
+
+        if (empty($userKeywords)) {
+            Log::info('❌ No keywords extracted from user message');
+            return null;
+        }
+
+        $allTables = $this->getKnowledgeTables();
+        
+        foreach ($allTables as $table) {
+            if (!$this->tableExists($table)) {
+                Log::info("⚠️ Table {$table} does not exist, skipping...");
+                continue;
+            }
+
+            $records = DB::table($table)->get();
+            Log::info("📋 Checking table: {$table} ({$records->count()} records)");
+
+            foreach ($records as $record) {
+                if (!isset($record->keywords) || empty($record->keywords)) {
+                    Log::info("⚠️ Record ID {$record->id} has no keywords, skipping...");
+                    continue;
+                }
+
+                $datasetKeywords = $this->extractKeywords(
+                    $this->normalizeText($record->keywords)
+                );
+
+                if (empty($datasetKeywords)) {
+                    Log::info("⚠️ Record ID {$record->id} has no valid keywords after processing");
+                    continue;
+                }
+
+                Log::info("─────────────────────────────────────────");
+                Log::info("📄 Record ID: {$record->id}");
+                Log::info("📝 Question: " . substr($record->question ?? 'N/A', 0, 50) . "...");
+                Log::info("🏷️  Dataset Keywords RAW: {$record->keywords}");
+                Log::info("🏷️  Dataset Keywords Processed: [" . implode(', ', $datasetKeywords) . "]");
+
+                if ($this->allKeywordsMatch($datasetKeywords, $userKeywords)) {
+                    Log::info("✅✅✅ STRICT MATCH FOUND in {$table} ✅✅✅");
+                    Log::info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+                    return [
+                        'answer' => $record->answer,
+                        'source' => $record->source ?? 'Internal Knowledge Base',
+                    ];
+                }
+            }
+        }
+
+        Log::info('❌❌❌ No strict match found in any table ❌❌❌');
+        Log::info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        return null;
+    }
+
+    private function allKeywordsMatch(array $datasetKeywords, array $userKeywords): bool
+    {
+        Log::info("🔍 Starting STRICT keyword matching...");
+        Log::info("   Dataset keywords (" . count($datasetKeywords) . "): " . implode(', ', $datasetKeywords));
+        Log::info("   User keywords (" . count($userKeywords) . "): " . implode(', ', $userKeywords));
+        
+        foreach ($datasetKeywords as $datasetKeyword) {
+            $found = false;
+            
+            foreach ($userKeywords as $userKeyword) {
+                if ($this->isSameWord($datasetKeyword, $userKeyword)) {
+                    $found = true;
+                    Log::info("   ✅ Match found: '{$datasetKeyword}' ↔️ '{$userKeyword}'");
+                    break;
+                }
+            }
+
+            if (!$found) {
+                Log::info("   ❌ Missing keyword: '{$datasetKeyword}' NOT FOUND in user message");
+                Log::info("   🚫 Match failed - not all keywords present");
+                return false;
+            }
+        }
+
+        Log::info("   ✅✅✅ ALL KEYWORDS MATCHED! ✅✅✅");
+        return true;
+    }
+
+    private function isSameWord(string $word1, string $word2): bool
+    {
+        if ($word1 === $word2) {
+            return true;
+        }
+
+        $minLength = min(strlen($word1), strlen($word2));
+        
+        if ($minLength >= 5) {
+            $checkLength = (int)($minLength * 0.8);
+            if (substr($word1, 0, $checkLength) === substr($word2, 0, $checkLength)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getKnowledgeTables(): array
+    {
+        return [
+            'organisasi_knowledge',
+            'beasiswa_knowledge',
+            'jurusan_knowledge',
+            'daftar_knowledge',
+            'event_knowledge',
+        ];
+    }
+
+    /* ==========================================================
+     * GROQ FALLBACK
+     * ========================================================== */
+    private function callGroq($message)
+    {
         try {
-            $systemPrompt = $this->getSystemPrompt();
-
             $response = Groq::chat()->completions()->create([
                 'model' => env('GROQ_MODEL', 'llama-3.1-8b-instant'),
                 'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ['role' => 'user', 'content' => $userMessage],
+                    ['role' => 'system', 'content' => $this->getSystemPrompt()],
+                    ['role' => 'user', 'content' => $message],
                 ],
                 'max_tokens' => 512,
                 'temperature' => 0.7,
             ]);
 
-            $aiText = null;
-            if (isset($response['choices'][0]['message']['content'])) {
-                $aiText = $response['choices'][0]['message']['content'];
-            } elseif (isset($response['choices'][0]['text'])) {
-                $aiText = $response['choices'][0]['text'];
-            }
+            $text = $response['choices'][0]['message']['content'] ?? null;
 
-            if ($aiText) {
-                Log::info('✅ Groq API responded');
-                
-                // Convert Markdown ke HTML
+            if ($text) {
                 $converter = new CommonMarkConverter([
                     'html_input' => 'strip',
                     'allow_unsafe_links' => false,
                 ]);
-                $html = $converter->convert($aiText)->getContent();
 
-                // Simpan history
-                $this->saveChatHistoryIfAuth(Auth::id(), $userMessage, strip_tags($aiText));
+                $this->saveChatHistoryIfAuth(Auth::id(), $message, strip_tags($text));
 
                 return response()->json([
-                    'reply' => $html,
+                    'reply' => $converter->convert($text)->getContent(),
                     'source' => 'groq'
                 ]);
             }
-
         } catch (\Throwable $e) {
-            Log::error('❌ Groq Error: ' . $e->getMessage());
+            Log::error('Groq Error: ' . $e->getMessage());
         }
 
-        /* ===========================================================
-         * 3. FALLBACK TERAKHIR
-         * =========================================================== */
-        Log::warning('⚠️ Using fallback response');
-        
         return response()->json([
             'reply' => $this->getFallbackResponse(),
             'source' => 'fallback'
         ]);
     }
 
-    /**
-     * IMPROVED: Search Knowledge Base dengan multiple strategi
-     */
-    private function searchKnowledgeBase($userMessage)
-    {
-        $tables = [
-            'organisasi_knowledge',
-            'beasiswa_knowledge',
-            'jurusan_knowledge',
-            'daftar_knowledge'
-        ];
-
-        // Normalisasi
-        $normalized = $this->normalizeText($userMessage);
-        $keywords = $this->extractKeywords($normalized);
-        
-        Log::info('🔍 Normalized: ' . $normalized);
-        Log::info('🔑 Keywords: ' . implode(', ', $keywords));
-
-        foreach ($tables as $table) {
-            // Cek apakah table exist
-            if (!$this->tableExists($table)) {
-                continue;
-            }
-
-            // STRATEGI 1: Exact Match Question
-            $result = DB::table($table)
-                ->whereRaw('LOWER(question) = ?', [$normalized])
-                ->first();
-            
-            if ($result) {
-                Log::info('✅ Found: EXACT MATCH in ' . $table);
-                return [
-                    'answer' => $result->answer,
-                    'source' => $result->source
-                ];
-            }
-
-            // STRATEGI 2: Question Contains User Message
-            $result = DB::table($table)
-                ->whereRaw('LOWER(question) LIKE ?', ["%{$normalized}%"])
-                ->first();
-            
-            if ($result) {
-                Log::info('✅ Found: QUESTION CONTAINS in ' . $table);
-                return [
-                    'answer' => $result->answer,
-                    'source' => $result->source
-                ];
-            }
-
-            // STRATEGI 3: Search by Keywords
-            if (!empty($keywords)) {
-                foreach ($keywords as $keyword) {
-                    // Cek di kolom keywords (jika ada)
-                    if ($this->columnExists($table, 'keywords')) {
-                        $result = DB::table($table)
-                            ->whereRaw('LOWER(keywords) LIKE ?', ["%{$keyword}%"])
-                            ->first();
-                        
-                        if ($result) {
-                            Log::info('✅ Found: KEYWORD MATCH (' . $keyword . ') in ' . $table);
-                            return [
-                                'answer' => $result->answer,
-                                'source' => $result->source
-                            ];
-                        }
-                    }
-
-                    // Cek di question
-                    $result = DB::table($table)
-                        ->whereRaw('LOWER(question) LIKE ?', ["%{$keyword}%"])
-                        ->first();
-                    
-                    if ($result) {
-                        Log::info('✅ Found: KEYWORD in QUESTION (' . $keyword . ') in ' . $table);
-                        return [
-                            'answer' => $result->answer,
-                            'source' => $result->source
-                        ];
-                    }
-
-                    // Cek di answer
-                    $result = DB::table($table)
-                        ->whereRaw('LOWER(answer) LIKE ?', ["%{$keyword}%"])
-                        ->first();
-                    
-                    if ($result) {
-                        Log::info('✅ Found: KEYWORD in ANSWER (' . $keyword . ') in ' . $table);
-                        return [
-                            'answer' => $result->answer,
-                            'source' => $result->source
-                        ];
-                    }
-                }
-            }
-
-            // STRATEGI 4: Fuzzy Match (any keyword match)
-            if (!empty($keywords)) {
-                $query = DB::table($table);
-                
-                foreach ($keywords as $index => $keyword) {
-                    if ($index === 0) {
-                        $query->where(function($q) use ($keyword, $table) {
-                            $q->whereRaw('LOWER(question) LIKE ?', ["%{$keyword}%"])
-                              ->orWhereRaw('LOWER(answer) LIKE ?', ["%{$keyword}%"]);
-                            
-                            if ($this->columnExists($table, 'keywords')) {
-                                $q->orWhereRaw('LOWER(keywords) LIKE ?', ["%{$keyword}%"]);
-                            }
-                        });
-                    } else {
-                        $query->orWhere(function($q) use ($keyword, $table) {
-                            $q->whereRaw('LOWER(question) LIKE ?', ["%{$keyword}%"])
-                              ->orWhereRaw('LOWER(answer) LIKE ?', ["%{$keyword}%"]);
-                            
-                            if ($this->columnExists($table, 'keywords')) {
-                                $q->orWhereRaw('LOWER(keywords) LIKE ?', ["%{$keyword}%"]);
-                            }
-                        });
-                    }
-                }
-                
-                $result = $query->first();
-                
-                if ($result) {
-                    Log::info('✅ Found: FUZZY MATCH in ' . $table);
-                    return [
-                        'answer' => $result->answer,
-                        'source' => $result->source
-                    ];
-                }
-            }
-        }
-
-        Log::info('❌ Not found in any table');
-        return null;
-    }
-
-    /**
-     * Normalize text untuk search
-     */
-    private function normalizeText($text)
-    {
-        $text = mb_strtolower(trim($text));
-        $text = rtrim($text, '?.!,;');
-        $text = preg_replace('/\s+/', ' ', $text);
-        return $text;
-    }
-
-    /**
-     * Extract keywords dari pesan
-     */
-    private function extractKeywords($message)
-    {
-        $stopwords = [
-            'apa', 'apakah', 'ada', 'yang', 'di', 'ke', 'dari', 'untuk', 
-            'dengan', 'adalah', 'pada', 'bagaimana', 'mengapa', 'siapa', 
-            'dimana', 'kapan', 'berapa', 'tentang', 'ini', 'itu', 'saya',
-            'the', 'is', 'are', 'what', 'where', 'when', 'how', 'why',
-            'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-            'bisa', 'dapat', 'berfokus', 'fokus'
-        ];
-        
-        $words = explode(' ', $message);
-        
-        $keywords = array_filter($words, function($word) use ($stopwords) {
-            return strlen($word) >= 3 && !in_array($word, $stopwords);
-        });
-        
-        return array_values($keywords);
-    }
-
-    /**
-     * Check if table exists
-     */
-    private function tableExists($table)
-    {
-        try {
-            DB::table($table)->limit(1)->get();
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Check if column exists in table
-     */
-    private function columnExists($table, $column)
-    {
-        try {
-            $columns = DB::getSchemaBuilder()->getColumnListing($table);
-            return in_array($column, $columns);
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Get fallback response
-     */
-    private function getFallbackResponse()
-    {
-        return "⚠️ Maaf, saya tidak dapat menemukan jawaban yang tepat untuk pertanyaan Anda.<br><br>" .
-               "<b>💡 Tips:</b><br>" .
-               "• Coba gunakan kata kunci yang lebih spesifik<br>" .
-               "• Tanyakan tentang: organisasi, jurusan, beasiswa, atau pendaftaran<br>" .
-               "• Contoh: 'Ada organisasi olahraga?', 'Jurusan apa saja di Polibatam?'<br><br>" .
-               "<b>Politeknik Negeri Batam</b> adalah perguruan tinggi negeri vokasi " .
-               "dengan fokus pada teknik, bisnis, dan kreatif digital.<br><br>" .
-               "Silakan ajukan pertanyaan lain! 😊";
-    }
-
-    /**
-     * Update system prompt untuk AI
-     */
+    /* ==========================================================
+     * SYSTEM PROMPT MANAGEMENT (EDIT PROMPT FEATURES)
+     * ========================================================== */
     public function updatePrompt(Request $request)
     {
         $request->validate([
-            'prompt' => 'required|string|max:5000'
+            'prompt' => 'required|string|max:2000',
         ]);
 
         try {
-            DB::table('ai_settings')->updateOrInsert(
-                ['key' => 'system_prompt'],
-                [
-                    'value' => $request->prompt,
-                    'updated_at' => now()
-                ]
-            );
+            $exists = DB::table('ai_settings')
+                ->where('key', 'system_prompt')
+                ->exists();
+
+            if ($exists) {
+                DB::table('ai_settings')
+                    ->where('key', 'system_prompt')
+                    ->update([
+                        'value' => $request->input('prompt'),
+                        'updated_at' => now(),
+                    ]);
+            } else {
+                DB::table('ai_settings')->insert([
+                    'key' => 'system_prompt',
+                    'value' => $request->input('prompt'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
             Cache::forget('system_prompt');
 
             return response()->json([
                 'success' => true,
-                'message' => 'System prompt berhasil diperbarui!'
+                'message' => 'System prompt berhasil diperbarui.'
             ]);
         } catch (\Exception $e) {
+            Log::error('Update Prompt Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memperbarui prompt: ' . $e->getMessage()
+                'message' => 'Gagal memperbarui system prompt.'
             ], 500);
         }
     }
 
-    /**
-     * Get system prompt untuk AI
-     */
     public function getPrompt()
     {
         try {
             $prompt = $this->getSystemPrompt();
-
             return response()->json([
                 'success' => true,
                 'prompt' => $prompt
             ]);
         } catch (\Exception $e) {
+            Log::error('Get Prompt Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengambil prompt: ' . $e->getMessage()
+                'message' => 'Gagal mengambil system prompt.'
             ], 500);
         }
     }
 
-    /**
-     * Helper: Ambil system prompt dari DB atau default
-     */
-    private function getSystemPrompt()
-    {
-        return Cache::remember('system_prompt', 3600, function () {
-            $setting = DB::table('ai_settings')
-                ->where('key', 'system_prompt')
-                ->first();
-
-            if ($setting && $setting->value) {
-                return $setting->value;
-            }
-
-            return "Kamu adalah PolCaBot, asisten virtual resmi Politeknik Negeri Batam.\n\n" .
-                   "TUGAS:\n" .
-                   "- Menjawab pertanyaan tentang Polibatam dengan ramah dan informatif\n" .
-                   "- Fokus pada: akademik, organisasi, jurusan, beasiswa, fasilitas\n" .
-                   "- Gunakan Bahasa Indonesia yang sopan\n" .
-                   "- Jika tidak tahu, akui dengan jujur\n\n" .
-                   "GAYA:\n" .
-                   "- Ramah dan membantu\n" .
-                   "- Singkat dan jelas\n" .
-                   "- Gunakan emoji secukupnya 😊\n";
-        });
-    }
-
-    /**
-     * Reset prompt ke default
-     */
     public function resetPrompt()
     {
         try {
+            $defaultPrompt = "Kamu adalah PolCaBot, asisten virtual resmi Politeknik Negeri Batam.
+
+TUGAS:
+- Menjawab pertanyaan tentang Polibatam dengan ramah dan informatif
+- Fokus pada: akademik, organisasi, jurusan, beasiswa, fasilitas
+- Gunakan Bahasa Indonesia yang sopan
+- Jika tidak tahu, akui dengan jujur
+
+GAYA:
+- Ramah dan membantu
+- Singkat dan jelas
+- Gunakan emoji secukupnya 😊";
+
             DB::table('ai_settings')
-                ->where('key', 'system_prompt')
-                ->delete();
+                ->updateOrInsert(
+                    ['key' => 'system_prompt'],
+                    [
+                        'value' => $defaultPrompt,
+                        'updated_at' => now(),
+                        'created_at' => now(),
+                    ]
+                );
 
             Cache::forget('system_prompt');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Prompt berhasil direset ke default!',
-                'prompt' => $this->getSystemPrompt()
+                'message' => 'System prompt berhasil direset ke default.',
+                'prompt' => $defaultPrompt
             ]);
-
         } catch (\Exception $e) {
+            Log::error('Reset Prompt Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mereset prompt: ' . $e->getMessage()
+                'message' => 'Gagal mereset system prompt.'
             ], 500);
         }
     }
 
-    /**
-     * Save chat to history only if user authenticated
-     */
-    private function saveChatHistoryIfAuth($userId, $message, $reply)
+    /* ==========================================================
+     * HELPERS
+     * ========================================================== */
+    private function normalizeText($text)
+    {
+        $text = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $text);
+        $text = preg_replace('/\s+/', ' ', mb_strtolower(trim($text)));
+        return $text;
+    }
+
+    private function extractKeywords($message)
+    {
+        $stopwords = [
+            'apa','apakah','bagaimana','mengapa','siapa','dimana','kapan','berapa',
+            'dan','atau','tetapi','namun','karena','sehingga',
+            'yang','di','ke','dari','untuk','dengan','pada','tentang',
+            'adalah','ini','itu','tersebut',
+            'saya','kamu','dia','mereka','kami','kita',
+            'bisa','dapat','akan','sudah','telah','sedang',
+            'the','is','are','was','were','what','where','when','how','why',
+            'a','an','and','or','but','in','on','at','to','for','of'
+        ];
+
+        $words = explode(' ', $message);
+        
+        $keywords = array_filter($words, function($word) use ($stopwords) {
+            return strlen($word) >= 3 && !in_array($word, $stopwords);
+        });
+
+        return array_values($keywords);
+    }
+
+    private function tableExists($table)
     {
         try {
-            if (!$userId) return;
-            
-            // Cek apakah table chat_history exist
-            if (!$this->tableExists('chat_history')) {
-                return;
-            }
-            
+            DB::table($table)->limit(1)->get();
+            return true;
+        } catch (\Exception) {
+            return false;
+        }
+    }
+
+    private function getFallbackResponse()
+    {
+        return "⚠️ Maaf, saya belum menemukan jawaban yang sesuai.<br><br>
+        <b>Tips:</b><br>
+        • Gunakan kata kunci spesifik<br>
+        • Contoh: <i>organisasi olahraga</i>, <i>event kampus</i><br><br>
+        Silakan coba pertanyaan lain 😊";
+    }
+
+    private function getSystemPrompt()
+    {
+        return Cache::remember('system_prompt', 3600, function () {
+            return DB::table('ai_settings')
+                ->where('key', 'system_prompt')
+                ->value('value')
+                ?? "Kamu adalah PolCaBot, asisten virtual resmi Politeknik Negeri Batam.
+
+TUGAS:
+- Menjawab pertanyaan tentang Polibatam dengan ramah dan informatif
+- Fokus pada: akademik, organisasi, jurusan, beasiswa, fasilitas
+- Gunakan Bahasa Indonesia yang sopan
+- Jika tidak tahu, akui dengan jujur
+
+GAYA:
+- Ramah dan membantu
+- Singkat dan jelas
+- Gunakan emoji secukupnya 😊";
+        });
+    }
+
+    private function saveChatHistoryIfAuth($userId, $message, $reply)
+    {
+        if (!$userId || !$this->tableExists('chat_history')) return;
+        
+        try {
             DB::table('chat_history')->insert([
                 'user_id' => $userId,
                 'message' => $message,
                 'reply' => $reply,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         } catch (\Exception $e) {
             Log::error('Failed to save chat history: ' . $e->getMessage());
