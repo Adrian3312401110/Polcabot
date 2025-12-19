@@ -1,6 +1,6 @@
-@extends('admin.layout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <style>
     /* --- Container utama --- */
     .profile-wrapper {
@@ -109,41 +109,43 @@
     <div class="profile-card">
         <div class="profile-header">
             <img
-                src="{{ $user->profile_photo
+                src="<?php echo e($user->profile_photo
                     ? asset('storage/profile/' . $user->profile_photo) . '?v=' . time()
-                    : 'https://cdn-icons-png.flaticon.com/512/4712/4712107.png' }}"
+                    : 'https://cdn-icons-png.flaticon.com/512/4712/4712107.png'); ?>"
                 class="profile-avatar"
                 alt="Admin">
 
             <div>
-                <h3>{{ $user->username }}</h3>
-                <p>{{ $user->email }}</p>
+                <h3><?php echo e($user->username); ?></h3>
+                <p><?php echo e($user->email); ?></p>
             </div>
         </div>
 
-        @if(session('success'))
+        <?php if(session('success')): ?>
             <div class="alert-info">
-                {{ session('success') }}
-            </div>
-        @endif
+                <?php echo e(session('success')); ?>
 
-        @if($errors->any())
+            </div>
+        <?php endif; ?>
+
+        <?php if($errors->any()): ?>
             <div class="alert-info" style="color:red;">
-                {{ $errors->first() }}
-            </div>
-        @endif
+                <?php echo e($errors->first()); ?>
 
-        <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
-            @csrf
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="<?php echo e(route('admin.profile.update')); ?>" enctype="multipart/form-data">
+            <?php echo csrf_field(); ?>
             <label class="form-label">Nama</label>
             <input
                 type="text"
                 name="name"
                 class="form-control"
-                value="{{ old('name', $user->username) }}">
+                value="<?php echo e(old('name', $user->username)); ?>">
 
             <label class="form-label">Email</label>
-            <input type="email" class="form-control" value="{{ $user->email }}" readonly>
+            <input type="email" class="form-control" value="<?php echo e($user->email); ?>" readonly>
 
             <label class="form-label">Password Baru</label>
             <input type="password" name="password" class="form-control" placeholder="Password baru">
@@ -169,4 +171,5 @@
         </form>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laravel\Polcabot\resources\views/admin/profile.blade.php ENDPATH**/ ?>

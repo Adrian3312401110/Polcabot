@@ -236,46 +236,44 @@
     <!-- NAVBAR -->
     <div class="navbar">
         <div class="brand">
-            <img src="{{ asset('images/logo.png') }}" alt="PolCaBot Logo" style="width:42px;height:42px;border-radius:8px;object-fit:cover;">
+            <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PolCaBot Logo" style="width:42px;height:42px;border-radius:8px;object-fit:cover;">
             PolCaBot
         </div>
 
-        {{-- <div class="navbar-center">
-            <input type="text" placeholder="Cari di sini...">
-        </div> --}}
+        
 
             <div class="navbar-right" id="profileMenu">
-                <span>Hi, {{ Auth::user()->username }}</span>
+                <span>Hi, <?php echo e(Auth::user()->username); ?></span>
 
                 <img
-                    src="{{ Auth::user()->profile_photo
+                    src="<?php echo e(Auth::user()->profile_photo
                         ? asset('storage/profile/' . Auth::user()->profile_photo)
-                        : 'https://cdn-icons-png.flaticon.com/512/4712/4712107.png' }}"
+                        : 'https://cdn-icons-png.flaticon.com/512/4712/4712107.png'); ?>"
                     alt="Admin">
 
             <div class="dropdown" id="dropdownMenu">
-                <a href="{{ route('admin.profile') }}">🧑‍💼 Ubah Profil</a>
+                <a href="<?php echo e(route('admin.profile')); ?>">🧑‍💼 Ubah Profil</a>
                 <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">🚪 Logout</a>
             </div>
         </div>
         
         <!-- Form Logout (Hidden) -->
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-            @csrf
+        <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display: none;">
+            <?php echo csrf_field(); ?>
         </form>
     </div>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <a href="{{ route('admin.dashboard') }}" class="{{ request()->is('admin/dashboard') ? 'active' : '' }}">📊 Dashboard</a>
-        <a href="{{ route('admin.knowledge') }}" class="{{ request()->is('admin/knowledge*') || request()->is('admin/organisasi*') ? 'active' : '' }}">📚 Knowledge Base</a>
-        <a href="{{ route('admin.training') }}" class="{{ request()->is('admin/training') ? 'active' : '' }}">🧠 Training AI</a>
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="<?php echo e(request()->is('admin/dashboard') ? 'active' : ''); ?>">📊 Dashboard</a>
+        <a href="<?php echo e(route('admin.knowledge')); ?>" class="<?php echo e(request()->is('admin/knowledge*') || request()->is('admin/organisasi*') ? 'active' : ''); ?>">📚 Knowledge Base</a>
+        <a href="<?php echo e(route('admin.training')); ?>" class="<?php echo e(request()->is('admin/training') ? 'active' : ''); ?>">🧠 Training AI</a>
         
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="content">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </div>
 
     <script>
@@ -295,4 +293,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH D:\laravel\Polcabot\resources\views/admin/layout.blade.php ENDPATH**/ ?>

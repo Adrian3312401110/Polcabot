@@ -7,13 +7,14 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\ProfileController; // ← TAMBAHKAN INI
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\OrganisasiController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Admin\BeasiswaController;
 use App\Http\Controllers\Admin\DaftarController;
 use App\Http\Controllers\Admin\JurusanController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('landing_page');
@@ -63,10 +64,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/pengaturan', [AdminDashboardController::class, 'pengaturan'])->name('admin.pengaturan');
     
-    // Profile
-    Route::get('/profile', [AdminDashboardController::class, 'editProfile'])->name('admin.profile');
-    Route::put('/profile/update', [AdminDashboardController::class, 'updateProfile'])->name('admin.profile.update');
-    
+    // ADMIN PROFILE (FIX FINAL)
+    Route::get('/profile', [AdminProfileController::class, 'index'])
+    ->name('admin.profile');
+
+    Route::post('/profile', [AdminProfileController::class, 'update'])
+    ->name('admin.profile.update');
+
     // CRUD Organisasi
     Route::get('/organisasi', [OrganisasiController::class, 'index'])->name('admin.organisasi.index');
     Route::get('/organisasi/create', [OrganisasiController::class, 'create'])->name('admin.organisasi.create');

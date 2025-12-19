@@ -32,12 +32,23 @@ class LoginController extends Controller
 
         // Coba login dengan Auth::attempt (otomatis pakai email + password)
         if (Auth::attempt($credentials, $request->filled('remember'))) {
-            // Regenerate session untuk keamanan
-            $request->session()->regenerate();
+        // Regenerate session untuk keamanan
+        $request->session()->regenerate();
 
-            // Redirect ke dashboard dengan greeting menggunakan username
-            return redirect()->intended(route('dashboard'))
-                ->with('success', 'Login berhasil! Selamat datang, ' . Auth::user()->username);
+        // 🔴 WAJIB ambil user setelah login
+        $user = Auth::user();
+
+        // ✅ Jika admin → dashboard admin
+        if ($user->role === 'admin') {
+            return redirect()
+                ->route('admin.dashboard')
+                ->with('success', 'Login admin berhasil! Selamat datang, ' . $user->username);
+        }
+
+        // ✅ Jika user biasa → dashboard / chat
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Login berhasil! Selamat datang, ' . $user->username);
         }
 
         // Jika gagal, kembali dengan error
