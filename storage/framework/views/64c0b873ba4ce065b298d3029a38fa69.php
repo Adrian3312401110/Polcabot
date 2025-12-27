@@ -30,15 +30,17 @@
     </div>
 <div class="profile-card" id="profileCardBtn">
 
-    @php
+    <?php
         $name = Auth::user()->username ?? Auth::user()->name;
         $initial = strtoupper(substr($name, 0, 1));
-    @endphp
+    ?>
     <div class="sidebar-avatar">
-        {{ $initial }}
+        <?php echo e($initial); ?>
+
     </div>
     <div class="name">
-        {{ Auth::user()->username ?? 'User' }}
+        <?php echo e(Auth::user()->username ?? 'User'); ?>
+
     </div>
 </div>
 </div>
@@ -48,25 +50,26 @@
 
         <div class="profile-header">
 
-            @php
+            <?php
                 $name = Auth::user()->username ?? Auth::user()->name;
                 $initial = strtoupper(substr($name, 0, 1));
-            @endphp
+            ?>
             <div class="profile-avatar">
-                {{ $initial }}
+                <?php echo e($initial); ?>
+
             </div>
 
             <h2>Profile</h2>
         </div>
 
         <form class="profile-form" id="profileForm">
-            @csrf
+            <?php echo csrf_field(); ?>
             <div class="form-group">
                 <label>Username</label>
                 <input 
                     type="text" 
                     name="username" 
-                    value="{{ Auth::user()->username }}" 
+                    value="<?php echo e(Auth::user()->username); ?>" 
                     required>
             </div>
             <div class="form-group">
@@ -74,7 +77,7 @@
                 <input 
                     type="email" 
                     name="email" 
-                    value="{{ Auth::user()->email }}" 
+                    value="<?php echo e(Auth::user()->email); ?>" 
                     required>
             </div>
             <div class="form-group">
@@ -104,10 +107,10 @@
 document.getElementById("profileForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    fetch("{{ route('profile.update') }}", {
+    fetch("<?php echo e(route('profile.update')); ?>", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            "X-CSRF-TOKEN": "<?php echo e(csrf_token()); ?>",
             "Accept": "application/json"
         },
         body: new FormData(this)
@@ -402,7 +405,7 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 <script>
 function newChat() {
     if (confirm("Mulai chat baru?")) {
-        window.location.href = "{{ route('dashboard') }}";
+        window.location.href = "<?php echo e(route('dashboard')); ?>";
     }
 }
 
@@ -434,12 +437,12 @@ function handleLogout() {
     if (confirm("Yakin ingin logout?")) {
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "{{ route('logout') }}";
+        form.action = "<?php echo e(route('logout')); ?>";
 
         const csrf = document.createElement("input");
         csrf.type = "hidden";
         csrf.name = "_token";
-        csrf.value = "{{ csrf_token() }}";
+        csrf.value = "<?php echo e(csrf_token()); ?>";
 
         form.appendChild(csrf);
         document.body.appendChild(form);
@@ -542,8 +545,8 @@ function deleteHistory(id) {
     fetch(`/conversations/${id}`, {
         method: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            'X-CSRF-TOKEN': "<?php echo e(csrf_token()); ?>"
         }
     }).then(() => loadChatHistory());
 }
-</script>
+</script><?php /**PATH C:\laragon\www\Polcabot\resources\views/components/sidebar.blade.php ENDPATH**/ ?>

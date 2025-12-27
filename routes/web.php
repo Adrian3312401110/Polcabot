@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\BeasiswaController;
 use App\Http\Controllers\Admin\DaftarController;
 use App\Http\Controllers\Admin\JurusanController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\ConversationController;
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('landing_page');
@@ -102,4 +103,18 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/jurusan/{id}/edit', [JurusanController::class, 'edit'])->name('admin.jurusan.edit');
     Route::put('/jurusan/{id}', [JurusanController::class, 'update'])->name('admin.jurusan.update');
     Route::delete('/jurusan/{id}', [JurusanController::class, 'destroy'])->name('admin.jurusan.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+
+    // History Chat (SIMPLE)
+    Route::get('/conversations', [ConversationController::class, 'index'])
+        ->name('conversations.index');
+
+    Route::post('/conversations', [ConversationController::class, 'store'])
+        ->name('conversations.store');
+
+    Route::delete('/conversations/{id}', [ConversationController::class, 'destroy'])
+        ->name('conversations.destroy');
+
 });

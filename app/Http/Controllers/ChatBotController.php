@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use League\CommonMark\CommonMarkConverter;
 use LucianoTonet\GroqLaravel\Facades\Groq;
+use App\Models\Conversation;
+use Illuminate\Support\Str;
 
 class ChatBotController extends Controller
 {
@@ -397,16 +399,25 @@ GAYA:
 
     private function saveChatHistoryIfAuth($userId, $message, $reply)
     {
-        if (!$userId || !$this->tableExists('chat_history')) return;
-        
+        if (!$userId) return;
+
         try {
-            DB::table('chat_history')->insert([
+            // 1️⃣ SIMPAN KE conversations (UNTUK SIDEBAR)
+            Conversation::create([
                 'user_id' => $userId,
-                'message' => $message,
-                'reply' => $reply,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'title' => Str::limit($message, 60),
             ]);
+
+            // 2️⃣ SIMPAN KE chat_history (DETAIL CHAT)
+            if ($this->tableExists('chat_history')) {
+                DB::table('chat_history')->insert([
+                    'user_id' => $userId,
+                    'message' => $message,
+                    'reply' => $reply,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         } catch (\Exception $e) {
             Log::error('Failed to save chat history: ' . $e->getMessage());
         }
