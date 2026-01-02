@@ -5,10 +5,10 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         
         <!-- Header -->
-        <h2 class="text-2xl font-bold mb-6">Edit Dataset Organisasi</h2>
+        <h2 class="text-2xl font-bold mb-6">Edit Dataset Jurusan</h2>
         
         <!-- Form -->
-        <form action="{{ route('admin.organisasi.update', $dataset->id) }}" method="POST">
+        <form action="{{ route('admin.jurusan.update', $dataset->id) }}" method="POST">
             @csrf
             @method('PUT')
             
@@ -103,7 +103,7 @@
             <!-- Buttons -->
             <div class="flex justify-end gap-3">
                 <!-- Tombol Batal -->
-                <a href="{{ route('admin.organisasi.index') }}" 
+                <a href="{{ route('admin.jurusa.index') }}" 
                    class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
                     Batal
                 </a>

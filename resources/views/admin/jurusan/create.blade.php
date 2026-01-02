@@ -5,10 +5,10 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         
         <!-- Header -->
-        <h2 class="text-2xl font-bold mb-6">Tambah Dataset Organisasi Baru</h2>
+        <h2 class="text-2xl font-bold mb-6">Tambah Dataset Jurusan Baru</h2>
         
         <!-- Form -->
-        <form action="{{ route('admin.organisasi.store') }}" method="POST">
+        <form action="{{ route('admin.jurusan.store') }}" method="POST">
             @csrf
             
             <!-- Field: Question (Pertanyaan) -->

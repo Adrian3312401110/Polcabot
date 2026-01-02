@@ -13,13 +13,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Jika user dengan email ini belum ada, buat
+        // Buat user admin
         User::updateOrCreate(
-            ['email' => 'test@example.com'], // cari berdasarkan email
+            ['email' => 'admin@polcabot.com'],
+            [
+                'username' => 'Administrator',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+            ]
+            
+        );
+
+        // Buat user biasa untuk testing
+        User::updateOrCreate(
+            ['email' => 'test@polcabot.com'],
             [
                 'username' => 'Test User',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123456'),
+                'role' => 'user',
             ]
         );
+
+        // Jalankan seeder untuk knowledge base
+        $this->call([
+            OrganisasiKnowledgeSeeder::class,
+            JurusanKnowledgeSeeder::class,
+            BeasiswaKnowledgeSeeder::class,
+            DaftarKnowledgeSeeder::class,
+        ]);
     }
 }

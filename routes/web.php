@@ -31,14 +31,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
 });
 
-// Authenticated Routes
+// Authenticated Routes (User Biasa)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // ✅ Profile Route (TAMBAHKAN INI)
+    // Profile Route
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     
     // Chat History & create chat
@@ -46,18 +46,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/history', [DashboardController::class, 'history'])->name('chat.history');
     Route::get('/chat/{chatId}', [DashboardController::class, 'chat'])->name('chat.show');
     
-    // ❗ ROUTE UNTUK AI CHATBOT (User & Admin)
+    // Route untuk AI Chatbot (User & Admin)
     Route::post('/chatbot/send', [ChatBotController::class, 'chat'])->name('chatbot.chat');
+
+    // History Chat (SIMPLE)
+    Route::get('/conversations', [ConversationController::class, 'index'])->name('conversations.index');
+    Route::post('/conversations', [ConversationController::class, 'store'])->name('conversations.store');
+    Route::delete('/conversations/{id}', [ConversationController::class, 'destroy'])->name('conversations.destroy');
 });
 
-// Admin Routes
-Route::prefix('admin')->middleware('auth')->group(function () {
+// ✅ Admin Routes (HANYA untuk role admin)
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/pengguna', [AdminDashboardController::class, 'pengguna'])->name('admin.pengguna');
     Route::get('/riwayat', [AdminDashboardController::class, 'riwayat'])->name('admin.riwayat');
     Route::get('/knowledge', [AdminDashboardController::class, 'knowledge'])->name('admin.knowledge');
 
-    // ✅ TRAINING AI ROUTES (NEW)
+    // Training AI Routes
     Route::get('/training', [ChatBotController::class, 'showTraining'])->name('admin.training');
     Route::post('/training/update-prompt', [ChatBotController::class, 'updatePrompt'])->name('admin.training.update');
     Route::get('/training/get-prompt', [ChatBotController::class, 'getPrompt'])->name('admin.training.get');
@@ -65,12 +70,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/pengaturan', [AdminDashboardController::class, 'pengaturan'])->name('admin.pengaturan');
     
-    // ADMIN PROFILE (FIX FINAL)
-    Route::get('/profile', [AdminProfileController::class, 'index'])
-    ->name('admin.profile');
-
-    Route::post('/profile', [AdminProfileController::class, 'update'])
-    ->name('admin.profile.update');
+    // Admin Profile
+    Route::get('/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+    Route::post('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
 
     // CRUD Organisasi
     Route::get('/organisasi', [OrganisasiController::class, 'index'])->name('admin.organisasi.index');
@@ -103,18 +105,4 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/jurusan/{id}/edit', [JurusanController::class, 'edit'])->name('admin.jurusan.edit');
     Route::put('/jurusan/{id}', [JurusanController::class, 'update'])->name('admin.jurusan.update');
     Route::delete('/jurusan/{id}', [JurusanController::class, 'destroy'])->name('admin.jurusan.destroy');
-});
-
-Route::middleware('auth')->group(function () {
-
-    // History Chat (SIMPLE)
-    Route::get('/conversations', [ConversationController::class, 'index'])
-        ->name('conversations.index');
-
-    Route::post('/conversations', [ConversationController::class, 'store'])
-        ->name('conversations.store');
-
-    Route::delete('/conversations/{id}', [ConversationController::class, 'destroy'])
-        ->name('conversations.destroy');
-
 });

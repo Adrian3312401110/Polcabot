@@ -15,6 +15,19 @@ return new class extends Migration
             // Tambah kolom keywords (tipe TEXT)
             $table->text('keywords')->nullable()->after('answer');
         });
+        Schema::table('jurusan_knowledge', function (Blueprint $table) {
+            // Tambah kolom keywords (tipe TEXT)
+            $table->text('keywords')->nullable()->after('answer');
+        });
+        Schema::table('daftar_knowledge', function (Blueprint $table) {
+            // Tambah kolom keywords (tipe TEXT)
+            $table->text('keywords')->nullable()->after('answer');
+        });
+        Schema::table('beasiswa_knowledge', function (Blueprint $table) {
+            // Tambah kolom keywords (tipe TEXT)
+            $table->text('keywords')->nullable()->after('answer');
+        });
+
     }
 
     /**

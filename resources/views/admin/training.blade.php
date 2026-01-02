@@ -555,57 +555,216 @@
     }
   }
 
-  /* Responsive */
+  /* FORCE ALL BOT TEXT TO WHITE */
+  .message-item.bot-message .message-bubble,
+  .message-item.bot-message .message-bubble * {
+      color: #ffffff !important;
+  }
+
+  /* DARK MODE FORCE WHITE */
+  .dark-mode .message-item.bot-message .message-bubble,
+  .dark-mode .message-item.bot-message .message-bubble * {
+      color: #ffffff !important;
+  }
+
+  /* FIX LINKS IN BOT MESSAGE */
+  .message-item.bot-message .message-bubble a {
+      text-decoration: underline;
+  }
+
+  /* === RESPONSIVE STYLES === */
   @media (max-width: 768px) {
     .training-header {
       flex-direction: column;
       gap: 15px;
       align-items: flex-start;
+      padding: 15px 20px;
+    }
+
+    .training-title h2 {
+      font-size: 20px;
+    }
+
+    .training-title p {
+      font-size: 12px;
+    }
+
+    .edit-prompt-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+
+    .edit-prompt-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .chat-wrapper {
+      height: calc(100vh - 240px);
+    }
+
+    .chat-content {
+      padding: 20px 15px 15px;
+    }
+
+    .chat-messages-container {
+      max-width: 100%;
+      gap: 20px;
+    }
+
+    .message-item {
+      gap: 10px;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .message-group {
+      max-width: 75%;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+
+    .message-actions {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .action-button {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .action-button span {
+      display: none;
+    }
+
+    .action-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .chat-input-area {
+      padding: 15px 15px 20px;
+    }
+
+    .chat-input-box {
+      max-width: 100%;
+      padding: 6px 10px;
+    }
+
+    .chat-input-box input {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .chat-send-button {
+      width: 38px;
+      height: 38px;
+    }
+
+    .chat-send-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .modal-content {
+      width: 95%;
       padding: 20px;
+      max-height: 90vh;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+    }
+
+    .modal-body textarea {
+      min-height: 200px;
+      font-size: 13px;
+    }
+
+    .modal-footer {
+      flex-direction: column-reverse;
+      gap: 10px;
+    }
+
+    .modal-footer > div {
+      display: none;
+    }
+
+    .btn-cancel,
+    .btn-save,
+    .btn-reset {
+      width: 100%;
+      padding: 12px 20px;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .training-header {
+      padding: 12px 15px;
+    }
+
+    .training-title h2 {
+      font-size: 18px;
+    }
+
+    .edit-prompt-btn {
+      font-size: 13px;
+      padding: 10px 16px;
     }
 
     .chat-wrapper {
       height: calc(100vh - 220px);
     }
 
-    .chat-messages-container {
-      max-width: 100%;
+    .chat-content {
+      padding: 15px 10px 10px;
+    }
+
+    .message-avatar {
+      width: 35px;
+      height: 35px;
     }
 
     .message-group {
       max-width: 80%;
     }
 
-    .chat-input-area {
-      padding: 15px 20px 20px;
+    .message-bubble {
+      padding: 10px 14px;
+      font-size: 13px;
     }
 
-    .chat-input-box {
-      max-width: 100%;
+    .chat-input-area {
+      padding: 12px 10px 15px;
+    }
+
+    .chat-input-box input {
+      font-size: 13px;
+    }
+
+    .chat-send-button {
+      width: 36px;
+      height: 36px;
     }
 
     .modal-content {
-      width: 95%;
-      padding: 20px;
+      padding: 15px;
+    }
+
+    .modal-body textarea {
+      min-height: 180px;
     }
   }
-
-  /* FORCE ALL BOT TEXT TO WHITE */
-.message-item.bot-message .message-bubble,
-.message-item.bot-message .message-bubble * {
-    color: #ffffff !important;
-}
-
-/* DARK MODE FORCE WHITE */
-.dark-mode .message-item.bot-message .message-bubble,
-.dark-mode .message-item.bot-message .message-bubble * {
-    color: #ffffff !important;
-}
-
-/* FIX LINKS IN BOT MESSAGE */
-.message-item.bot-message .message-bubble a {
-    text-decoration: underline;
-}
 </style>
 </head>
 
@@ -623,7 +782,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
         </svg>
-        EDIT PROMPT
+        <span>EDIT PROMPT</span>
     </button>
 </div>
 
@@ -696,25 +855,25 @@ function addMessage(role, text) {
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
         </svg>
-        Salin
+        <span>Salin</span>
       </button>
       <button class="action-button" onclick="regenerate()">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
-        Ulang
+        <span>Ulang</span>
       </button>`
     : `<button class="action-button" onclick="copyMessage(this)">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
         </svg>
-        Salin
+        <span>Salin</span>
       </button>
       <button class="action-button" onclick="editMessage(this)">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
         </svg>
-        Edit
+        <span>Edit</span>
       </button>`;
 
   messageDiv.innerHTML = `
@@ -799,7 +958,7 @@ function copyMessage(btn) {
   navigator.clipboard.writeText(text);
   
   const originalHTML = btn.innerHTML;
-  btn.innerHTML = '<span>✓ Tersalin</span>';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>Tersalin</span>';
   setTimeout(() => {
     btn.innerHTML = originalHTML;
   }, 2000);
@@ -848,7 +1007,6 @@ function editMessage(btn) {
 
 // Modal functions
 async function openEditModal() {
-  // Load current prompt from server
   try {
     const response = await fetch('{{ route("admin.training.get") }}');
     const data = await response.json();
@@ -875,7 +1033,6 @@ function savePrompt() {
     return;
   }
 
-  // Disable button saat loading
   const saveBtn = document.querySelector('.btn-save');
   const originalText = saveBtn.textContent;
   saveBtn.textContent = 'Menyimpan...';
@@ -908,14 +1065,12 @@ function savePrompt() {
   });
 }
 
-// Close modal when clicking outside
 editModal.addEventListener('click', function(e) {
   if (e.target === editModal) {
     closeEditModal();
   }
 });
 
-// Reset to default prompt
 function resetToDefault() {
   if (!confirm('Apakah Anda yakin ingin mereset prompt ke default? Perubahan yang belum disimpan akan hilang.')) {
     return;
@@ -943,17 +1098,14 @@ function resetToDefault() {
   });
 }
 
-// Handle Enter key
 chatInput.addEventListener('keypress', function(event) {
   if (event.key === 'Enter') {
     sendMessage();
   }
 });
 
-// Send button click
 sendButton.addEventListener('click', sendMessage);
 
-// Check for auto message from URL
 const urlParams = new URLSearchParams(window.location.search);
 const autoMessage = urlParams.get('message');
 if (autoMessage) {
@@ -961,7 +1113,6 @@ if (autoMessage) {
   sendMessage();
 }
 
-// Initial scroll
 scrollToBottom();
 </script>
 

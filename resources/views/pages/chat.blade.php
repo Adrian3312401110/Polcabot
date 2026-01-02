@@ -305,6 +305,10 @@
     .chat-input-box {
       max-width: 100%;
     }
+    
+    .chat-content {
+      padding: 80px 15px 100px;
+    }
   }
 </style>
 @endpush
@@ -324,7 +328,7 @@
       <input 
         type="text" 
         id="chatInput" 
-        placeholder="Ketik Pertanyaaan..." 
+        placeholder="Ketik Pertanyaan..." 
         autocomplete="off"
       >
       <button class="chat-send-button" id="sendButton">
@@ -336,212 +340,312 @@
   </div>
 </div>
 
+@push('scripts')
 <script>
-const chatMessages = document.getElementById('chatMessages');
-const chatContent = document.getElementById('chatContent');
-const chatInput = document.getElementById('chatInput');
-const sendButton = document.getElementById('sendButton');
-
-// Auto scroll to bottom
-function scrollToBottom() {
-  chatContent.scrollTop = chatContent.scrollHeight;
-}
-
-// Add message to chat
-function addMessage(role, text) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message-item ${role === 'bot' ? 'bot-message' : 'user-message'}`;
-
-  const avatarIcon = role === 'bot' 
-    ? '{{ asset("images/logo.png") }}'
-    : 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+(function() {
+  'use strict';
   
-  // Set avatar size in pixels (different size for bot vs user)
-  const avatarSize = role === 'bot' ? 40 : 30;
-  const actions = role === 'bot' 
-    ? `<button class="action-button" onclick="copyMessage(this)">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-        </svg>
-        Salin
-      </button>
-      <button class="action-button" onclick="regenerate()">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-        </svg>
-        Ulang
-      </button>`
-    : `<button class="action-button" onclick="copyMessage(this)">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-        </svg>
-        Salin
-      </button>
-      <button class="action-button" onclick="editMessage(this)">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-        </svg>
-        Edit
-      </button>`;
-
-  messageDiv.innerHTML = `
-    <div class="message-avatar">
-      <img src="${avatarIcon}" alt="${role}" width="${avatarSize}" height="${avatarSize}" style="width:${avatarSize}px;height:${avatarSize}px;">
-    </div>
-    <div class="message-group">
-      <div class="message-bubble">${text}</div>
-      <div class="message-actions">${actions}</div>
-    </div>
-  `;
-
-  chatMessages.appendChild(messageDiv);
-  scrollToBottom();
-}
-
-// Show typing indicator
-function showTypingIndicator() {
-  const typingDiv = document.createElement('div');
-  typingDiv.className = 'message-item bot-message';
-  typingDiv.id = 'typingIndicator';
-
-  typingDiv.innerHTML = `
-    <div class="message-avatar">
-      <img src="{{ asset("images/logo.png") }}" alt="Bot" width="40" height="40" style="width:40px;height:40px;">
-    </div>
-    <div class="message-group">
-      <div class="message-bubble typing-indicator">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>
-    </div>
-  `;
-
-  chatMessages.appendChild(typingDiv);
-  scrollToBottom();
-}
-
-// Remove typing indicator
-function removeTypingIndicator() {
-  const indicator = document.getElementById('typingIndicator');
-  if (indicator) {
-    indicator.remove();
+  console.log('🚀 Chat page initializing...');
+  
+  // ========== SIDEBAR & DARK MODE INITIALIZATION ==========
+  function initChatPageFeatures() {
+    // Initialize Sidebar Toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu li, .profile-card');
+    
+    if (menuToggle && sidebar) {
+      console.log('✅ Initializing sidebar for chat page');
+      
+      function toggleSidebar() {
+        const isActive = sidebar.classList.toggle('active');
+        
+        if (overlay) {
+          overlay.classList.toggle('active', isActive);
+        }
+        
+        if (window.innerWidth <= 768) {
+          document.body.style.overflow = isActive ? 'hidden' : '';
+        }
+        
+        console.log(isActive ? '📂 Sidebar opened' : '📁 Sidebar closed');
+      }
+      
+      menuToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleSidebar();
+      });
+      
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          sidebar.classList.remove('active');
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      }
+      
+      sidebarLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove('active');
+            if (overlay) {
+              overlay.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+          }
+        });
+      });
+    }
+    
+    // Initialize Dark Mode
+    const darkModeToggle = document.querySelector('.dark-mode-toggle');
+    const toggleSwitch = document.querySelector('.toggle-switch');
+    
+    if (darkModeToggle && toggleSwitch) {
+      console.log('✅ Initializing dark mode for chat page');
+      
+      // Load saved preference
+      const savedMode = localStorage.getItem('darkMode');
+      const isDarkMode = savedMode === 'true';
+      
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        toggleSwitch.classList.add('active');
+      }
+      
+      function toggleDarkMode() {
+        const body = document.body;
+        const wasDark = body.classList.contains('dark-mode');
+        
+        if (wasDark) {
+          body.classList.remove('dark-mode');
+          body.classList.add('light-mode');
+          toggleSwitch.classList.remove('active');
+          localStorage.setItem('darkMode', 'false');
+          console.log('☀️ Light mode');
+        } else {
+          body.classList.add('dark-mode');
+          body.classList.remove('light-mode');
+          toggleSwitch.classList.add('active');
+          localStorage.setItem('darkMode', 'true');
+          console.log('🌙 Dark mode');
+        }
+      }
+      
+      toggleSwitch.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleDarkMode();
+      });
+      
+      darkModeToggle.addEventListener('click', function(e) {
+        if (e.target === toggleSwitch || toggleSwitch.contains(e.target)) {
+          return;
+        }
+        toggleDarkMode();
+      });
+    }
   }
-}
+  
+  // ========== CHAT FUNCTIONALITY ==========
+  const chatMessages = document.getElementById('chatMessages');
+  const chatContent = document.getElementById('chatContent');
+  const chatInput = document.getElementById('chatInput');
+  const sendButton = document.getElementById('sendButton');
 
-// Send message
-async function sendMessage() {
-  const message = chatInput.value.trim();
-  if (!message) return;
+  // Auto scroll to bottom
+  function scrollToBottom() {
+    chatContent.scrollTop = chatContent.scrollHeight;
+  }
 
-  // Add user message
-  addMessage('user', message);
-  chatInput.value = '';
+  // Add message to chat
+  function addMessage(role, text) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message-item ${role === 'bot' ? 'bot-message' : 'user-message'}`;
+
+    const avatarIcon = role === 'bot' 
+      ? '{{ asset("images/logo.png") }}'
+      : 'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+    
+    const avatarSize = role === 'bot' ? 40 : 30;
+    const actions = role === 'bot' 
+      ? `<button class="action-button" onclick="copyMessage(this)">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+          Salin
+        </button>
+        <button class="action-button" onclick="regenerate()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+          Ulang
+        </button>`
+      : `<button class="action-button" onclick="copyMessage(this)">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+          Salin
+        </button>
+        <button class="action-button" onclick="editMessage(this)">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+          Edit
+        </button>`;
+
+    messageDiv.innerHTML = `
+      <div class="message-avatar">
+        <img src="${avatarIcon}" alt="${role}" width="${avatarSize}" height="${avatarSize}" style="width:${avatarSize}px;height:${avatarSize}px;">
+      </div>
+      <div class="message-group">
+        <div class="message-bubble">${text}</div>
+        <div class="message-actions">${actions}</div>
+      </div>
+    `;
+
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
+  }
 
   // Show typing indicator
-  showTypingIndicator();
+  function showTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message-item bot-message';
+    typingDiv.id = 'typingIndicator';
 
-  try {
-    // Send to backend
-    const response = await fetch('{{ url("/chatbot/send") }}', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-      },
-      body: JSON.stringify({ message: message })
-    });
+    typingDiv.innerHTML = `
+      <div class="message-avatar">
+        <img src="{{ asset("images/logo.png") }}" alt="Bot" width="40" height="40" style="width:40px;height:40px;">
+      </div>
+      <div class="message-group">
+        <div class="message-bubble typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    `;
 
-    const data = await response.json();
-    
-    // Remove typing indicator
-    removeTypingIndicator();
-    
-    // Add bot response
-    addMessage('bot', data.reply || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
-    
-  } catch (error) {
-    console.error('Error:', error);
-    removeTypingIndicator();
-    addMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+    chatMessages.appendChild(typingDiv);
+    scrollToBottom();
   }
-}
 
-// Copy message
-function copyMessage(btn) {
-  const bubble = btn.closest('.message-group').querySelector('.message-bubble');
-  const text = bubble.textContent.trim();
-  navigator.clipboard.writeText(text);
-  
-  const originalHTML = btn.innerHTML;
-  btn.innerHTML = '<span>✓ Tersalin</span>';
-  setTimeout(() => {
-    btn.innerHTML = originalHTML;
-  }, 2000);
-}
+  // Remove typing indicator
+  function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+      indicator.remove();
+    }
+  }
 
-// Regenerate response
-function regenerate() {
-  // Get last user message
-  const messages = chatMessages.querySelectorAll('.user-message');
-  if (messages.length > 0) {
-    const lastUserMessage = messages[messages.length - 1];
-    const text = lastUserMessage.querySelector('.message-bubble').textContent.trim();
-    
-    // Resend the message
+  // Send message
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    addMessage('user', message);
+    chatInput.value = '';
     showTypingIndicator();
-    
-    setTimeout(async () => {
-      try {
-        const response = await fetch('{{ url("/chatbot/send") }}', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-          },
-          body: JSON.stringify({ message: text })
-        });
 
-        const data = await response.json();
-        removeTypingIndicator();
-        addMessage('bot', data.reply || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
-        
-      } catch (error) {
-        console.error('Error:', error);
-        removeTypingIndicator();
-        addMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
-      }
-    }, 500);
+    try {
+      const response = await fetch('{{ url("/chatbot/send") }}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ message: message })
+      });
+
+      const data = await response.json();
+      removeTypingIndicator();
+      addMessage('bot', data.reply || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
+      
+    } catch (error) {
+      console.error('Error:', error);
+      removeTypingIndicator();
+      addMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+    }
   }
-}
 
-// Edit message
-function editMessage(btn) {
-  const bubble = btn.closest('.message-group').querySelector('.message-bubble');
-  const text = bubble.textContent.trim();
-  chatInput.value = text;
-  chatInput.focus();
-}
+  // Global functions for buttons
+  window.copyMessage = function(btn) {
+    const bubble = btn.closest('.message-group').querySelector('.message-bubble');
+    const text = bubble.textContent.trim();
+    navigator.clipboard.writeText(text);
+    
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<span>✓ Tersalin</span>';
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+    }, 2000);
+  };
 
-// Handle Enter key
-chatInput.addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
+  window.regenerate = function() {
+    const messages = chatMessages.querySelectorAll('.user-message');
+    if (messages.length > 0) {
+      const lastUserMessage = messages[messages.length - 1];
+      const text = lastUserMessage.querySelector('.message-bubble').textContent.trim();
+      
+      showTypingIndicator();
+      
+      setTimeout(async () => {
+        try {
+          const response = await fetch('{{ url("/chatbot/send") }}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ message: text })
+          });
+
+          const data = await response.json();
+          removeTypingIndicator();
+          addMessage('bot', data.reply || 'Maaf, terjadi kesalahan. Silakan coba lagi.');
+          
+        } catch (error) {
+          console.error('Error:', error);
+          removeTypingIndicator();
+          addMessage('bot', 'Maaf, terjadi kesalahan koneksi. Silakan coba lagi.');
+        }
+      }, 500);
+    }
+  };
+
+  window.editMessage = function(btn) {
+    const bubble = btn.closest('.message-group').querySelector('.message-bubble');
+    const text = bubble.textContent.trim();
+    chatInput.value = text;
+    chatInput.focus();
+  };
+
+  // Event listeners
+  chatInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  sendButton.addEventListener('click', sendMessage);
+
+  // Check for auto message from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const autoMessage = urlParams.get('message');
+  if (autoMessage) {
+    chatInput.value = autoMessage;
     sendMessage();
   }
-});
 
-// Send button click
-sendButton.addEventListener('click', sendMessage);
-
-// Check for auto message from URL
-const urlParams = new URLSearchParams(window.location.search);
-const autoMessage = urlParams.get('message');
-if (autoMessage) {
-  chatInput.value = autoMessage;
-  sendMessage();
-}
-
-// Initial scroll
-scrollToBottom();
+  // Initialize features
+  initChatPageFeatures();
+  scrollToBottom();
+  
+  console.log('✅ Chat page fully initialized');
+})();
 </script>
+@endpush
 @endsection

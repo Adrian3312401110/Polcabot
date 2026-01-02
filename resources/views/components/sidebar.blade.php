@@ -24,30 +24,29 @@
             <li class="empty-state">Memuat riwayat chat...</li>
         </ul>
     </div>
-    <div class="dark-mode-toggle">
+    <div class="dark-mode-toggle" id="darkModeToggleContainer">
         <span>🌙 Dark Mode</span>
-        <div class="toggle-switch" onclick="toggleDarkMode()" id="darkModeToggle"></div>
+        <div class="toggle-switch" id="darkModeToggle"></div>
     </div>
-<div class="profile-card" id="profileCardBtn">
+    <div class="profile-card" id="profileCardBtn">
+        @php
+            $name = Auth::user()->username ?? Auth::user()->name;
+            $initial = strtoupper(substr($name, 0, 1));
+        @endphp
+        <div class="sidebar-avatar">
+            {{ $initial }}
+        </div>
+        <div class="name">
+            {{ Auth::user()->username ?? 'User' }}
+        </div>
+    </div>
+</div>
 
-    @php
-        $name = Auth::user()->username ?? Auth::user()->name;
-        $initial = strtoupper(substr($name, 0, 1));
-    @endphp
-    <div class="sidebar-avatar">
-        {{ $initial }}
-    </div>
-    <div class="name">
-        {{ Auth::user()->username ?? 'User' }}
-    </div>
-</div>
-</div>
 <div class="profile-modal" id="profileModal">
     <div class="profile-modal-content">
         <span class="close-btn" onclick="closeProfile()">&times;</span>
 
         <div class="profile-header">
-
             @php
                 $name = Auth::user()->username ?? Auth::user()->name;
                 $initial = strtoupper(substr($name, 0, 1));
@@ -55,7 +54,6 @@
             <div class="profile-avatar">
                 {{ $initial }}
             </div>
-
             <h2>Profile</h2>
         </div>
 
@@ -100,42 +98,6 @@
     </div>
 </div>
 
-<script>
-document.getElementById("profileForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    fetch("{{ route('profile.update') }}", {
-        method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Accept": "application/json"
-        },
-        body: new FormData(this)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert("Profil berhasil diperbarui!");
-            closeProfile();
-            location.reload();
-        } else {
-            let msg = "Gagal memperbarui profil:\n";
-            Object.values(data.errors).forEach(err => {
-                msg += "- " + err + "\n";
-            });
-            alert(msg);
-        }
-    })
-    .catch(err => {
-        alert("Terjadi kesalahan saat mengupdate profile");
-        console.error(err);
-    });
-});
-</script>
-
-
-
-
 <style>
 .sidebar {
     position: fixed;
@@ -159,7 +121,11 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     color: white;
 }
 
-.sidebar.hidden { transform: translateX(-100%); }
+/* DESKTOP: Hide sidebar with .hidden class */
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
 .sidebar::-webkit-scrollbar { width: 6px; }
 .sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
 .sidebar::-webkit-scrollbar-thumb {
@@ -174,14 +140,12 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     align-items: center;
     justify-content: center;
     gap: 6px;
-
-    padding: 8px 12px;      /* ⬅️ lebih kecil */
+    padding: 8px 12px;
     background: rgba(255,255,255,0.15);
     border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px;     /* ⬅️ lebih ramping */
+    border-radius: 6px;
     color: white;
-
-    font-size: 12px;        /* ⬅️ kecilin teks */
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
 }
@@ -194,6 +158,7 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 .new-chat-btn:hover {
     background: rgba(255,255,255,0.25);
 }
+
 .search-container {
     position: relative;
     margin-bottom: 20px;
@@ -206,7 +171,8 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     top: 50%;
     transform: translateY(-50%);
     opacity: 0.5;
-    width: 18px; height: 18px;
+    width: 18px; 
+    height: 18px;
 }
 
 .search-container input {
@@ -217,6 +183,7 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.15);
 }
+
 .sidebar-section { margin-bottom: 25px; }
 
 .sidebar-section h3 {
@@ -247,6 +214,7 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 }
 
 .chat-history-item.hidden { display: none; }
+
 .delete-chat-btn {
     display: none;
     width: 28px;
@@ -266,9 +234,16 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 .dark-mode-toggle {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 15px;
     border-radius: 8px;
     background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    user-select: none;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255,255,255,0.15);
 }
 
 .toggle-switch {
@@ -278,6 +253,8 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     border-radius: 25px;
     position: relative;
     cursor: pointer;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
 }
 
 .toggle-switch.active { background: #0ea5e9; }
@@ -285,11 +262,14 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 .toggle-switch::after {
     content: "";
     position: absolute;
-    top: 2px; left: 2px;
-    width: 21px; height: 21px;
+    top: 2px; 
+    left: 2px;
+    width: 21px; 
+    height: 21px;
     background: white;
     border-radius: 50%;
     transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .toggle-switch.active::after {
@@ -316,10 +296,25 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     border-radius: 50%;
 }
 
+.sidebar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .profile-modal {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
     background: rgba(0,0,0,0.6);
     display: none;
     align-items: center;
@@ -354,7 +349,37 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
     color: white;
 }
 
-.profile-form { display: flex; flex-direction: column; gap: 20px; }
+.profile-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+.light-mode .form-group input {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.dark-mode .form-group input {
+    background: #1a1a2e;
+    color: white;
+    border-color: #444;
+}
 
 .profile-actions {
     display: flex;
@@ -362,188 +387,270 @@ document.getElementById("profileForm").addEventListener("submit", function(e) {
 }
 
 .btn-save {
+    flex: 1;
     background: #0ea5e9;
     padding: 12px;
     border-radius: 8px;
     border: none;
     color: white;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-save:hover {
+    background: #0284c7;
 }
 
 .btn-logout {
+    flex: 1;
     background: #ef4444;
     padding: 12px;
     border: none;
     border-radius: 8px;
     color: white;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-logout:hover {
+    background: #dc2626;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .profile-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: #0ea5e9;
-        color: #fff;
-        font-size: 40px;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 10px;
-    }
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #0ea5e9;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+}
 
+/* ========== MOBILE RESPONSIVE ========== */
 @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); }
-    .sidebar.active { transform: translateX(0); }
+    .sidebar { 
+        transform: translateX(-100%);
+        box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+    }
+    
+    .sidebar.active { 
+        transform: translateX(0) !important;
+    }
+    
+    .sidebar {
+        top: 60px;
+        height: calc(100vh - 60px);
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        top: 55px;
+        height: calc(100vh - 55px);
+        width: 240px;
+    }
 }
 </style>
 
 <script>
-function newChat() {
-    if (confirm("Mulai chat baru?")) {
-        window.location.href = "{{ route('dashboard') }}";
+// ========== UNIFIED SIDEBAR & DARK MODE SCRIPT ==========
+(function() {
+    'use strict';
+    
+    console.log('🔧 Sidebar component initializing...');
+    
+    // Profile Form Submit
+    const profileForm = document.getElementById("profileForm");
+    if (profileForm) {
+        profileForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            fetch("{{ route('profile.update') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
+                },
+                body: new FormData(this)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Profil berhasil diperbarui!");
+                    closeProfile();
+                    location.reload();
+                } else {
+                    let msg = "Gagal memperbarui profil:\n";
+                    Object.values(data.errors).forEach(err => {
+                        msg += "- " + err + "\n";
+                    });
+                    alert(msg);
+                }
+            })
+            .catch(err => {
+                alert("Terjadi kesalahan saat mengupdate profile");
+                console.error(err);
+            });
+        });
     }
-}
 
-function searchChats(q) {
-    q = q.toLowerCase();
-    document.querySelectorAll('.chat-history-item').forEach(item => {
-        const text = item.dataset.chat.toLowerCase();
-        item.classList.toggle("hidden", !text.includes(q));
-    });
-}
+    // New Chat
+    window.newChat = function() {
+        if (confirm("Mulai chat baru?")) {
+            window.location.href = "{{ route('dashboard') }}";
+        }
+    };
 
-function loadChat(event, text) {
-    const input = document.getElementById('chatInput');
-    if (input) {
-        input.value = text;
-        input.focus();
-    }
-}
+    // Search Chats
+    window.searchChats = function(q) {
+        q = q.toLowerCase();
+        document.querySelectorAll('.chat-history-item').forEach(item => {
+            const text = item.dataset.chat ? item.dataset.chat.toLowerCase() : '';
+            item.classList.toggle("hidden", !text.includes(q));
+        });
+    };
 
-function openProfile() {
-    document.getElementById('profileModal').classList.add('active');
-}
+    // Load Chat
+    window.loadChat = function(event, text) {
+        const input = document.getElementById('chatInput');
+        if (input) {
+            input.value = text;
+            input.focus();
+        }
+    };
 
-function closeProfile() {
-    document.getElementById('profileModal').classList.remove('active');
-}
+    // Profile Modal
+    window.openProfile = function() {
+        const modal = document.getElementById('profileModal');
+        if (modal) modal.classList.add('active');
+    };
 
-function handleLogout() {
-    if (confirm("Yakin ingin logout?")) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "{{ route('logout') }}";
+    window.closeProfile = function() {
+        const modal = document.getElementById('profileModal');
+        if (modal) modal.classList.remove('active');
+    };
 
-        const csrf = document.createElement("input");
-        csrf.type = "hidden";
-        csrf.name = "_token";
-        csrf.value = "{{ csrf_token() }}";
+    // Logout
+    window.handleLogout = function() {
+        if (confirm("Yakin ingin logout?")) {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "{{ route('logout') }}";
 
-        form.appendChild(csrf);
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
+            const csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "_token";
+            csrf.value = "{{ csrf_token() }}";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const body = document.body;
-    const toggle = document.getElementById("darkModeToggle");
-    const saved = localStorage.getItem("theme");
+            form.appendChild(csrf);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    };
 
-    if (saved === "dark") {
-        body.classList.add("dark-mode");
-        toggle.classList.add("active");
-    } else {
-        body.classList.add("light-mode");
-    }
-});
-
-function toggleDarkMode() {
-    const body = document.body;
-    const toggle = document.getElementById("darkModeToggle");
-
-    const isDark = body.classList.contains("dark-mode");
-
-    body.classList.toggle("dark-mode", !isDark);
-    body.classList.toggle("light-mode", isDark);
-    toggle.classList.toggle("active");
-
-    localStorage.setItem("theme", isDark ? "light" : "dark");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const card = document.getElementById("profileCardBtn");
-    if (card) {
-        card.addEventListener("click", e => {
+    // Profile Card Click
+    const profileCardBtn = document.getElementById("profileCardBtn");
+    if (profileCardBtn) {
+        profileCardBtn.addEventListener("click", function(e) {
             e.preventDefault();
             e.stopPropagation();
             openProfile();
         });
     }
 
-    const modal = document.getElementById("profileModal");
-    if (modal) {
-        modal.addEventListener("click", e => {
-            if (e.target === modal) closeProfile();
+    // Profile Modal Outside Click
+    const profileModal = document.getElementById("profileModal");
+    if (profileModal) {
+        profileModal.addEventListener("click", function(e) {
+            if (e.target === profileModal) {
+                closeProfile();
+            }
         });
     }
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadChatHistory();
-});
+    // Load Chat History
+    window.loadChatHistory = function() {
+        const list = document.getElementById('chatHistoryList');
 
-function loadChatHistory() {
-    fetch('/conversations')
-        .then(res => res.json())
-        .then(data => {
-            const list = document.getElementById('chatHistoryList');
-            list.innerHTML = '';
-
-            if (!data || data.length === 0) {
-                list.innerHTML =
-                    `<li class="empty-state">Belum ada riwayat chat</li>`;
-                return;
-            }
-
-            data.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'chat-history-item';
-                li.dataset.chat = item.title;
-
-                li.onclick = () => {
-                    const input = document.getElementById('chatInput');
-                    if (input) {
-                        input.value = item.title;
-                        input.focus();
-                    }
-                };
-
-                li.innerHTML = `
-                    <span class="chat-text">${item.title}</span>
-                    <button class="delete-chat-btn"
-                        onclick="event.stopPropagation(); deleteHistory(${item.id})">
-                        🗑
-                    </button>
-                `;
-                list.appendChild(li);
-            });
-        })
-        .catch(err => {
-            console.error('Gagal load history:', err);
-        });
-}
-
-function deleteHistory(id) {
-    if (!confirm("Hapus riwayat ini?")) return;
-
-    fetch(`/conversations/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        if (!list) {
+            console.warn("⚠️ chatHistoryList not found");
+            return;
         }
-    }).then(() => loadChatHistory());
-}
+
+        fetch('/conversations')
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = `<li class="empty-state">Belum ada riwayat chat</li>`;
+                    return;
+                }
+
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'chat-history-item';
+                    li.dataset.chat = item.title;
+
+                    li.onclick = () => {
+                        const input = document.getElementById('chatInput');
+                        if (input) {
+                            input.value = item.title;
+                            input.focus();
+                        }
+                    };
+
+                    li.innerHTML = `
+                        <span class="chat-text">${item.title}</span>
+                        <button class="delete-chat-btn"
+                            onclick="event.stopPropagation(); deleteHistory(${item.id})">
+                            🗑
+                        </button>
+                    `;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => {
+                console.error('Failed to load history:', err);
+            });
+    };
+
+    window.deleteHistory = function(id) {
+        if (!confirm("Hapus riwayat ini?")) return;
+
+        fetch(`/conversations/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        }).then(() => loadChatHistory());
+    };
+
+    // Load chat history on page load
+    loadChatHistory();
+    
+    console.log('✅ Sidebar component initialized');
+})();
 </script>

@@ -3,64 +3,73 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Conversation;
+use App\Models\ChatMessage;
+use App\Models\Organisasi;
+use App\Models\Beasiswa;
+use App\Models\Jurusan;
+use App\Models\Daftar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
-    public function dashboard() {
-        return view('admin.dashboard');
+    public function dashboard()
+    {
+        // Hitung total users (semua user atau hanya role 'user')
+        $totalUsers = User::where('role', 'user')->count(); // atau User::count() untuk semua user
+        
+        // Hitung total conversations
+        $totalChats = Conversation::count();
+        
+        // Hitung masing-masing knowledge base
+        $organisasi = Organisasi::count();
+        $beasiswa = Beasiswa::count();
+        $jurusan = Jurusan::count();
+        $daftar = Daftar::count();
+        
+        // Total knowledge base (gabungan semua)
+        $totalKnowledgeBase = $organisasi + $beasiswa + $jurusan + $daftar;
+        
+        // Detail knowledge base untuk ditampilkan
+        $knowledgeDetails = [
+            'organisasi' => $organisasi,
+            'beasiswa' => $beasiswa,
+            'jurusan' => $jurusan,
+            'daftar' => $daftar
+        ];
+        
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'totalChats',
+            'totalKnowledgeBase',
+            'knowledgeDetails'
+        ));
     }
-
-    public function pengguna() {
-        return view('admin.pengguna');
+    
+    public function pengguna()
+    {
+        // Tampilkan halaman pengguna
+        $users = User::where('role', 'user')->get(); // atau sesuai kebutuhan
+        return view('admin.pengguna', compact('users'));
     }
-
-    public function riwayat() {
-        return view('admin.riwayat');
+    
+    public function riwayat()
+    {
+        // Tampilkan riwayat chat
+        $conversations = Conversation::with('user')->latest()->get();
+        return view('admin.riwayat', compact('conversations'));
     }
-
-    public function knowledge() {
+    
+    public function knowledge()
+    {
+        // Tampilkan knowledge base
         return view('admin.knowledge');
     }
-
-    public function training() {
-        return view('admin.training');
-    }
-
-    public function pengaturan() {
+    
+    public function pengaturan()
+    {
+        // Tampilkan halaman pengaturan
         return view('admin.pengaturan');
     }
-
-    public function editProfile()
-{
-    return view('admin.profile');
-}
-public function updateProfile(Request $request)
-{
-    $user = Auth::user();
-
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'password' => 'nullable|min:6',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
-
-    $user->nama = $request->nama;
-    $user->email = $request->email;
-
-    if ($request->filled('password')) {
-        $user->password = bcrypt($request->password);
-    }
-
-    if ($request->hasFile('foto')) {
-        $path = $request->file('foto')->store('profile', 'public');
-        $user->foto = $path;
-    }
-
-    $user->save();
-
-    return back()->with('success', 'Profil berhasil diperbarui!');
-}
 }
