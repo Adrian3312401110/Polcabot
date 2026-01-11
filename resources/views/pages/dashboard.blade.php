@@ -18,7 +18,7 @@
   </div>
 </div>
 
-<!-- Floating Tutorial Button (PINDAHKAN KE SINI) -->
+<!-- Floating Tutorial Button -->
 <button id="tutorialButton" onclick="startPolCaBotTutorial()" style="
     position: fixed;
     bottom: 100px;
@@ -68,8 +68,33 @@
         initSidebar();
         initDarkMode();
         initActionCards();
+        initTopbarButtons();
         
         console.log('✅ Dashboard fully initialized');
+    }
+    
+    // ========== TOPBAR BUTTONS ==========
+    function initTopbarButtons() {
+        // Home button
+        const homeBtn = document.getElementById('homeBtn');
+        if (homeBtn) {
+            homeBtn.addEventListener('click', function() {
+                window.location.href = '/'; // Ganti dengan route landing page Anda
+            });
+        }
+        
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Apakah Anda yakin ingin keluar?')) {
+                    // Ganti dengan route logout Anda
+                    window.location.href = '/logout';
+                    // Atau gunakan form submit:
+                    // document.getElementById('logout-form').submit();
+                }
+            });
+        }
     }
     
     // ========== SIDEBAR TOGGLE ==========
@@ -196,7 +221,6 @@
         
         // Click on container
         darkModeToggle.addEventListener('click', function(e) {
-            // Don't trigger if clicking directly on switch
             if (e.target === toggleSwitch || toggleSwitch.contains(e.target)) {
                 return;
             }
@@ -219,12 +243,10 @@
             const question = card.getAttribute('data-question');
             console.log('  Card ' + (index + 1) + ': ' + question);
             
-            // Ensure proper styling
             card.style.cursor = 'pointer';
             card.style.position = 'relative';
             card.style.zIndex = '10';
             
-            // Click handler
             card.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -232,7 +254,6 @@
                 const question = this.getAttribute('data-question');
                 console.log('🎯 Card clicked: ' + question);
                 
-                // Try to call startChat function
                 if (typeof window.startChat === 'function') {
                     console.log('✅ Calling startChat()');
                     window.startChat(question);
@@ -242,7 +263,6 @@
                 } else {
                     console.log('⚠️ startChat() not found, using fallback');
                     
-                    // Fallback: populate chat input
                     const chatInput = document.querySelector('.chat-input input');
                     if (chatInput) {
                         chatInput.value = question;
@@ -259,13 +279,10 @@
                 }
             });
             
-            // Touch event for mobile
             card.addEventListener('touchend', function(e) {
-                // Let click event handle it
                 e.preventDefault();
             });
             
-            // Visual feedback
             card.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-5px)';
             });
@@ -312,7 +329,6 @@
     
     console.log('🎓 Tutorial System Loading...');
     
-    // Tutorial steps configuration
     const tutorialSteps = [
         {
             target: '.menu-toggle',
@@ -350,23 +366,19 @@
     let tutorialOverlay = null;
     let tutorialTooltip = null;
     
-    // Check if user has seen tutorial
     function hasSeenTutorial() {
         return localStorage.getItem('polcabot_tutorial_seen') === 'true';
     }
     
-    // Mark tutorial as seen
     function markTutorialSeen() {
         localStorage.setItem('polcabot_tutorial_seen', 'true');
     }
     
-    // Reset tutorial (for testing)
     window.resetTutorial = function() {
         localStorage.removeItem('polcabot_tutorial_seen');
         console.log('✅ Tutorial reset. Refresh page to see tutorial again.');
     };
     
-    // Create overlay
     function createOverlay() {
         tutorialOverlay = document.createElement('div');
         tutorialOverlay.className = 'tutorial-overlay';
@@ -383,7 +395,6 @@
         document.body.appendChild(tutorialOverlay);
     }
     
-    // Create tooltip
     function createTooltip() {
         tutorialTooltip = document.createElement('div');
         tutorialTooltip.className = 'tutorial-tooltip';
@@ -398,7 +409,6 @@
             pointer-events: auto;
         `;
         
-        // Add dark mode support
         if (document.body.classList.contains('dark-mode')) {
             tutorialTooltip.style.background = '#2d3748';
             tutorialTooltip.style.color = 'white';
@@ -407,7 +417,6 @@
         document.body.appendChild(tutorialTooltip);
     }
     
-    // Highlight element
     function highlightElement(element) {
         if (!element) return;
         
@@ -415,7 +424,6 @@
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
         
-        // Create highlight
         const highlight = document.createElement('div');
         highlight.className = 'tutorial-highlight';
         highlight.style.cssText = `
@@ -433,14 +441,11 @@
         `;
         
         document.body.appendChild(highlight);
-        
-        // Scroll element into view
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
         return highlight;
     }
     
-    // Position tooltip
     function positionTooltip(element, position) {
         if (!element || !tutorialTooltip) return;
         
@@ -473,7 +478,6 @@
                 left = rect.left + scrollLeft;
         }
         
-        // Ensure tooltip stays within viewport
         const margin = 10;
         if (left < margin) left = margin;
         if (left + tooltipRect.width > window.innerWidth - margin) {
@@ -485,9 +489,7 @@
         tutorialTooltip.style.left = left + 'px';
     }
     
-    // Show step
     function showStep(stepIndex) {
-        // Remove previous highlight
         const oldHighlight = document.querySelector('.tutorial-highlight');
         if (oldHighlight) oldHighlight.remove();
         
@@ -506,10 +508,8 @@
             return;
         }
         
-        // Highlight element
         const highlight = highlightElement(element);
         
-        // Update tooltip content
         const isDark = document.body.classList.contains('dark-mode');
         tutorialTooltip.innerHTML = `
             <div style="margin-bottom: 15px;">
@@ -555,10 +555,8 @@
             </div>
         `;
         
-        // Position tooltip
         positionTooltip(element, step.position);
         
-        // Add event listeners
         const skipBtn = tutorialTooltip.querySelector('.tutorial-skip');
         const nextBtn = tutorialTooltip.querySelector('.tutorial-next');
         
@@ -579,32 +577,26 @@
         });
     }
     
-    // Next step
     function nextStep() {
         currentStep++;
         showStep(currentStep);
     }
     
-    // End tutorial
     function endTutorial() {
-        // Remove all tutorial elements
         if (tutorialOverlay) tutorialOverlay.remove();
         if (tutorialTooltip) tutorialTooltip.remove();
         
         const highlight = document.querySelector('.tutorial-highlight');
         if (highlight) highlight.remove();
         
-        // Mark as seen
         markTutorialSeen();
         
         console.log('✅ Tutorial completed');
     }
     
-    // Start tutorial
     function startTutorial() {
         console.log('🎓 Starting tutorial...');
         
-        // Add CSS animations
         if (!document.getElementById('tutorial-styles')) {
             const style = document.createElement('style');
             style.id = 'tutorial-styles';
@@ -643,9 +635,7 @@
         showStep(0);
     }
     
-    // Initialize tutorial on page load
     function initTutorial() {
-        // Wait for all elements to be ready
         setTimeout(() => {
             if (!hasSeenTutorial()) {
                 startTutorial();
@@ -655,12 +645,10 @@
         }, 1500);
     }
     
-    // Manual start function (GLOBAL)
     window.startPolCaBotTutorial = function() {
         startTutorial();
     };
     
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initTutorial);
     } else {

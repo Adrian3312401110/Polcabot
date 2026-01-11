@@ -64,12 +64,6 @@ class JurusanKnowledgeSeeder extends Seeder
                 'keywords' => 'prodi, jurusan, Teknik Mesin, program studi',
                 'source' => 'https://registrasi.polibatam.ac.id/program-studi/'
             ],
-            [
-                'question' => '',
-                'answer' => '',
-                'keywords' => '',
-                'source' => ''
-            ],
         ];
 
         foreach ($data as $item) {

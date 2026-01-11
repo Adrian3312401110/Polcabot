@@ -5,8 +5,10 @@
             <div class="features-text">
                 <h2>Fitur-Fitur <br> Aplikasi PolCaBot</h2>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Berikut adalah beberapa fitur unggulan yang
+                    ditawarkan oleh PolCaBot untuk memudahkan
+                    administrasi kampus dan meningkatkan pengalaman
+                    pengguna.
                 </p>
             </div>
 
@@ -25,7 +27,7 @@
                         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chatbot">
                     </div>
                     <h3>Chatbot</h3>
-                    <p>Chatbot AI cerdas untuk membantu administrasi kampus.</p>
+                    <p>Chatbot AI cerdas untuk membantu menjawab pertanyaan seputar akademik dan administrasi kampus Polibatam.</p>
                     <a href="#" class="feature-link">View integration →</a>
                 </div>
 

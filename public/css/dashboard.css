@@ -1,4 +1,4 @@
-/* ========== DASHBOARD STYLES - FIXED VERSION ========== */
+/* ========== DASHBOARD STYLES - WITH TOPBAR BUTTONS ========== */
 
 * {
     margin: 0;
@@ -54,6 +54,52 @@
     font-weight: bold;
     font-size: 20px;
     color: white;
+}
+
+/* ========== TOPBAR BUTTONS (NEW) ========== */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 2px solid white;
+    border-radius: 8px;
+    background: transparent;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.topbar-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.topbar-btn:active {
+    transform: translateY(0);
+}
+
+.topbar-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.topbar-btn.btn-logout {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #fca5a5;
+}
+
+.topbar-btn.btn-logout:hover {
+    background: #ef4444;
+    border-color: white;
 }
 
 /* Sidebar */
@@ -118,7 +164,7 @@
     background: rgba(255,255,255,0.05); 
 }
 
-/* ========== DARK MODE TOGGLE - FIXED ========== */
+/* ========== DARK MODE TOGGLE ========== */
 .dark-mode-toggle {
     display: flex;
     align-items: center;
@@ -128,6 +174,7 @@
     border-radius: 8px;
     background: rgba(255,255,255,0.1);
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -252,7 +299,7 @@
     opacity: 0.8;
 }
 
-/* ========== QUICK ACTION CARDS - FIXED FOR DESKTOP ========== */
+/* ========== QUICK ACTION CARDS ========== */
 .quick-actions {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -275,6 +322,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    -webkit-user-select: none;
     user-select: none;
     position: relative;
     z-index: 10;
@@ -319,7 +367,7 @@
     color: #38bdf8;
 }
 
-/* ========== CHAT INPUT - FIXED Z-INDEX ========== */
+/* ========== CHAT INPUT ========== */
 .chat-input-container {
     position: fixed;
     bottom: 30px;
@@ -566,6 +614,54 @@
     visibility: visible;
 }
 
+/* Tutorial Button Styles */
+.tutorial-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(14, 165, 233, 0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.tutorial-btn:hover {
+    background: rgba(14, 165, 233, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Floating Tutorial Button */
+.floating-tutorial-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: #0ea5e9;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.floating-tutorial-btn:hover {
+    background: #0284c7;
+    transform: scale(1.1);
+}
+
 /* ========== RESPONSIVE STYLES ========== */
 
 /* Tablet */
@@ -576,6 +672,16 @@
     
     .main-content {
         padding: 30px 20px;
+    }
+    
+    .topbar-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+    
+    .topbar-btn svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -610,6 +716,20 @@
     
     .topbar .logo img {
         height: 30px;
+    }
+    
+    /* Hide text on mobile, show icon only */
+    .topbar-btn span {
+        display: none;
+    }
+    
+    .topbar-btn {
+        padding: 8px 10px;
+        gap: 0;
+    }
+    
+    .topbar-actions {
+        gap: 8px;
     }
     
     .menu-toggle {
@@ -703,6 +823,15 @@
     
     .topbar .logo img {
         height: 26px;
+    }
+    
+    .topbar-btn {
+        padding: 6px 8px;
+    }
+    
+    .topbar-btn svg {
+        width: 18px;
+        height: 18px;
     }
     
     .sidebar {
@@ -843,51 +972,4 @@
     .chat-input-container {
         bottom: 15px;
     }
-    /* Tutorial Button Styles */
-.tutorial-btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(14, 165, 233, 0.2);
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s ease;
 }
-
-.tutorial-btn:hover {
-    background: rgba(14, 165, 233, 0.3);
-    transform: translateY(-2px);
-}
-
-/* Floating Tutorial Button */
-.floating-tutorial-btn {
-    position: fixed;
-    bottom: 100px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background: #0ea5e9;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    z-index: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.floating-tutorial-btn:hover {
-    background: #0284c7;
-    transform: scale(1.1);
-}
-} 
