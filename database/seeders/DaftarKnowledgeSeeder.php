@@ -59,6 +59,30 @@ class DaftarKnowledgeSeeder extends Seeder
                 'source' => '-'
             ],
             [
+                'question' => 'siapa pembuat polcabot?',
+                'answer' => 'proyek polcabot dikerjakan oleh mahasiswa semester 3 kelas IF3D Pagi AI, yaitu: 1. Adrian Rizqullah 2. Elsada Mika H.N 3. Helena Gultom ',
+                'keywords' => 'pembuat, polcabot, siapa.',
+                'source' => ''
+            ],
+            [
+                'question' => 'Dimana Politeknik Negeri Batam berada?',
+                'answer' => 'Politeknik Negeri Batam beralamat di Jl. Ahmad Yani, Batam Kota, Kota Batam, Kepulauan Riau, Indonesia.',
+                'keywords' => 'dimana, politeknik negeri batam, alamat',
+                'source' => 'https://www.polibatam.ac.id/kontak/'
+            ],
+            [
+                'question' => 'Gedung apa aja yang ada di polibatam?',
+                'answer' => 'Politeknik Negeri Batam memiliki beberapa gedung utama seperti Gedung Utama (GU), Tower A, Gedung Technopreneur Centre, dan Gedung Laboratorium Teaching Factory, dilengkapi fasilitas pendukung seperti Student Center, Auditorium, Perpustakaan, dan lapangan olahraga. Gedung-gedung ini berisi laboratorium khusus, ruang kelas, studio, dan pusat aktivitas mahasiswa untuk mendukung pembelajaran berbasis proyek dan pengembangan diri. ',
+                'keywords' => 'gedung, polibatam.',
+                'source' => ''
+            ],
+            [
+                'question' => 'siapa direktur politeknik negeri batam?',
+                'answer' => 'Direktur Politeknik Negeri Batam (Polibatam) saat ini adalah Ir. Bambang Hendrawan, ST., MSM., CIPMP., CISCP. untuk periode 2024-2028, menggantikan direktur sebelumnya, Uuf Brajawidagda. Bambang Hendrawan dilantik pada Juli 2024 dan memiliki fokus pada peningkatan kualitas pendidikan vokasi dan kemitraan industri. ',
+                'keywords' => 'siapa, direktur, politeknik',
+                'source' => 'https://www.polibatam.ac.id/profil-direktur-periode-2024-2029/'
+            ],
+            [
                 'question' => '',
                 'answer' => '',
                 'keywords' => '',

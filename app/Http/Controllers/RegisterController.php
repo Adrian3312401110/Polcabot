@@ -17,35 +17,39 @@ class RegisterController extends Controller
     }
 
     /**
-     * Process registrasi user baru
+     * Proses registrasi user baru
      */
     public function register(Request $request)
     {
         // Validasi input
         $validated = $request->validate([
             'username' => 'required|string|min:3|max:255|unique:users,username',
-            'email' => 'required|email|max:255|unique:users,email',
+            'email'    => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
+            'agree'    => 'accepted',
         ], [
             'username.required' => 'Username wajib diisi!',
-            'username.unique' => 'Username sudah terdaftar!',
-            'username.min' => 'Username minimal 3 karakter!',
-            'email.required' => 'Email wajib diisi!',
-            'email.email' => 'Format email tidak valid!',
-            'email.unique' => 'Email sudah terdaftar!',
+            'username.unique'   => 'Username sudah terdaftar!',
+            'username.min'      => 'Username minimal 3 karakter!',
+            'email.required'    => 'Email wajib diisi!',
+            'email.email'       => 'Format email tidak valid!',
+            'email.unique'      => 'Email sudah terdaftar!',
             'password.required' => 'Password wajib diisi!',
-            'password.min' => 'Password minimal 6 karakter!',
-            'password.confirmed' => 'Password dan konfirmasi password tidak sama!',
+            'password.min'      => 'Password minimal 6 karakter!',
+            'password.confirmed'=> 'Password dan konfirmasi password tidak sama!',
+            'agree.accepted'    => 'Anda harus menyetujui penggunaan data untuk melanjutkan registrasi!',
         ]);
 
-        // Buat user baru dengan password ter-hash
+        // Simpan user baru
         User::create([
             'username' => $validated['username'],
-            'email' => $validated['email'],
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Redirect ke login (TIDAK auto login)
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
+        // Redirect ke halaman login
+        return redirect()
+            ->route('login')
+            ->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
 }

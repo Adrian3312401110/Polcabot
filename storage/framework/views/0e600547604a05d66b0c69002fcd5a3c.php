@@ -1,15 +1,13 @@
-@extends('layouts.app')
+<?php $__env->startPush('styles'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('css/landing.css')); ?>">
+<?php $__env->stopPush(); ?>
 
-@push('styles')
-<link rel="stylesheet" href="{{ asset('css/landing.css') }}">
-@endpush
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="landing-page" id="landingPage">
     <!-- Navbar -->
     <nav>
         <div class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="PolCaBot Logo">
+            <img src="<?php echo e(asset('images/logo.png')); ?>" alt="PolCaBot Logo">
             <span>
                 <span style="color:white;">P</span><span style="color:orange;">o</span><span style="color:white;">l</span><span style="color:#1e90ff;">CaBot</span>
             </span>
@@ -22,20 +20,20 @@
         </ul>
         
         <!-- Tombol Sign In (tampil kalau BELUM login) -->
-        @guest
-            <a href="{{ route('login') }}" class="btn-signin">Login/Register</a>
-        @endguest
+        <?php if(auth()->guard()->guest()): ?>
+            <a href="<?php echo e(route('login')); ?>" class="btn-signin">Login/Register</a>
+        <?php endif; ?>
 
         <!-- Tombol Logout (tampil kalau SUDAH login) -->
-        @auth
-            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                @csrf
+        <?php if(auth()->guard()->check()): ?>
+            <form method="POST" action="<?php echo e(route('logout')); ?>" style="display: inline;">
+                <?php echo csrf_field(); ?>
                 <button type="submit" class="btn-signin" style="background: #dc3545; border: none; cursor: pointer;">Keluar</button>
             </form>
-        @endauth
+        <?php endif; ?>
     </nav>
 
-    @yield('landing-content')
+    <?php echo $__env->yieldContent('landing-content'); ?>
 
     <footer>
         <p>© 2025 PolCaBot. All rights reserved.</p>
@@ -47,4 +45,5 @@
         </ul>
     </footer>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\Polcabot\resources\views/layouts/landing.blade.php ENDPATH**/ ?>

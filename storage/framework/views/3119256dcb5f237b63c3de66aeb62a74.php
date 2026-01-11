@@ -52,3 +52,4 @@
         </div>
     </div>
 </section>
+<?php /**PATH E:\Polcabot\resources\views/components/features.blade.php ENDPATH**/ ?>

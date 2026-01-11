@@ -1,7 +1,7 @@
 <section id="contact">
     <div class="contact-wrapper">
         <div class="contact-form">
-            <h2>Contact Us</h2>
+            <h2>Kontak</h2>
             <p class="subtext">Feel free to contact us at anytime. We will get back as soon as possible.</p>
             
             @if(session('success'))

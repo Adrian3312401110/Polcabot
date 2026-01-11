@@ -6,3 +6,4 @@
         <button onclick="location.href='#contact'">Contact Us</button>
     </div>
 </section>
+<?php /**PATH E:\Polcabot\resources\views/components/about.blade.php ENDPATH**/ ?>

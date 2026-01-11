@@ -43,26 +43,32 @@ class JurusanKnowledgeSeeder extends Seeder
             [
                 'question' => 'Prodi apa saja yang ada pada jurusan Teknik informatika?',
                 'answer' => 'Terdapat 8 prodi pada jurusan Teknik Informatika, yaitu: 1. (D3) Teknik Informatika 2. (D3) Teknologi Geomatika 3. (D4) Animasi 4. (D4) Teknologi Rekayasa Multimedia 5. (D4) Rekayasa Keamanan Siber 6. (D4) Rekayasa Perangkat Lunak 7. (D4) Teknologi Permainan 8. S2 Rekayasa/Teknik Komputer.',
-                'keywords' => 'prodi, jurusan, teknik informatika, program studi',
+                'keywords' => 'prodi, jurusan, teknik informatika.',
                 'source' => 'https://registrasi.polibatam.ac.id/program-studi/'
             ],
             [
                 'question' => 'Prodi apa saja yang ada pada jurusan Manajemen Bisnis?',
                 'answer' => 'Terdapat 6 prodi pada jurusan Manajemen Bisnis, yaitu: 1. (D3) Akuntasi 2. (D4) Akuntasi Manajerial 3. (D4) Administrasi Bisnis Terapan 4. (D4) Administrasi Bisnis Terapan (Internasional Class) 5. (D4) Logistik Perdagangan Internasioanl 6. (D2) Distribusi Barang.',
-                'keywords' => 'prodi, jurusan, manajemen bisnis, program studi',
+                'keywords' => 'prodi, jurusan, manajemen bisnis.',
                 'source' => 'https://registrasi.polibatam.ac.id/program-studi/'
             ],
             [
                 'question' => 'Prodi apa saja yang ada pada jurusan Teknik Elektro?',
                 'answer' => 'Terdapat 6 prodi pada jurusan Teknik Elektro, yaitu: 1. (D3) Teknik Elektro Manufaktur 2. (D4) Teknologi Rekayasa Elektronika 3. (D3) Teknik Instrumentasi 4. (D4) Teknik Mekatronika 5. (D4) Teknologi Rekayasa Pembangkit Energi 6. (D4) Teknologi Rekayasa Robotika.',
-                'keywords' => 'prodi, jurusan, Teknik Elektro, program studi',
+                'keywords' => 'prodi, jurusan, Teknik Elektro.',
                 'source' => 'https://registrasi.polibatam.ac.id/program-studi/'
             ],
             [
                 'question' => 'Prodi apa saja yang ada pada jurusan Teknik Mesin?',
                 'answer' => 'Terdapat 6 prodi pada jurusan Teknik Mesin, yaitu: 1. (D3) Teknik Mesin 2. (D3) Teknik Perawatan Pesawat Udara 3. (D4) Teknologi Rekayasa Konstruksi Perkapalan 4. (D4) Teknologi Rekayasa Pengelasan dan Fabrikasi 5. (D4) Teknologi Rekayasa Metalurgi 6. Program Profesi Insinyur (PSPPI).',
-                'keywords' => 'prodi, jurusan, Teknik Mesin, program studi',
+                'keywords' => 'prodi, jurusan, Teknik Mesin.',
                 'source' => 'https://registrasi.polibatam.ac.id/program-studi/'
+            ],
+            [
+                'question' => 'kapan jadwal aas Teknik Informatika tahun 2025/2026?',
+                'answer' => 'jadwal aas per jurusan tersedia pada link yang sudah dibagikan. Berikut jadwal Asesmen Akhir Semester Jurusan Teknik Informatika: https://polibatam.id/jadwalAASsemesterganjil2526',
+                'keywords' => 'kapan, jadwal, aas, teknik informatika, 2025/2026',
+                'source' => 'https://polibatam.id/jadwalAASsemesterganjil2526'
             ],
         ];
 

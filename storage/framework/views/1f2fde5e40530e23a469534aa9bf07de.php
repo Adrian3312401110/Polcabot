@@ -22,7 +22,7 @@
     <!-- Left -->
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 items-center justify-center">
       <div class="text-center">
-        <img src="{{ asset('images/robot.png') }}" alt="Robot PolCaBot" class="mx-auto w-72 h-72 object-contain mb-6">
+        <img src="<?php echo e(asset('images/robot.png')); ?>" alt="Robot PolCaBot" class="mx-auto w-72 h-72 object-contain mb-6">
         <p class="text-slate-300 text-lg">Asisten Kampus Pintar Anda</p>
       </div>
     </div>
@@ -34,20 +34,20 @@
         <h2 class="text-4xl font-bold text-slate-900 mb-2">Selamat Datang!</h2>
         <p class="text-slate-600 mb-8">Buat akun Anda untuk memulai</p>
 
-        @if($errors->any())
+        <?php if($errors->any()): ?>
         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          @foreach($errors->all() as $error)
-            <p class="text-sm">{{ $error }}</p>
-          @endforeach
+          <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <p class="text-sm"><?php echo e($error); ?></p>
+          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
-        @endif
+        <?php endif; ?>
 
-        <form method="POST" action="{{ route('register.submit') }}" class="space-y-5">
-          @csrf
+        <form method="POST" action="<?php echo e(route('register.submit')); ?>" class="space-y-5">
+          <?php echo csrf_field(); ?>
 
           <div>
             <label class="block text-sm font-semibold text-slate-900 mb-2">Username</label>
-            <input type="text" name="username" value="{{ old('username') }}"
+            <input type="text" name="username" value="<?php echo e(old('username')); ?>"
               placeholder="ketik username"
               class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required>
@@ -55,7 +55,7 @@
 
           <div>
             <label class="block text-sm font-semibold text-slate-900 mb-2">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}"
+            <input type="email" name="email" value="<?php echo e(old('email')); ?>"
               placeholder="ketik email"
               class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required>
@@ -102,7 +102,7 @@
 
           <p class="text-center text-slate-600">
             Punya akun?
-            <a href="{{ route('login') }}" class="text-blue-600 font-semibold hover:text-blue-700">
+            <a href="<?php echo e(route('login')); ?>" class="text-blue-600 font-semibold hover:text-blue-700">
               Login
             </a>
           </p>
@@ -122,3 +122,4 @@
 
 </body>
 </html>
+<?php /**PATH E:\Polcabot\resources\views/pages/register.blade.php ENDPATH**/ ?>

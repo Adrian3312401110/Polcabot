@@ -139,7 +139,7 @@ class OrganisasiKnowledgeSeeder extends Seeder
             [
                 'question' => 'apa itu ormawa mapala?',
                 'answer' => 'Mahasiswa Pencinta Alam Politeknik Negeri Batam atau MAPALA POLIBATAM adalah organisasi yang bergerak di bidang lingkungan, yang berdiri dengan tujuan menyadarkan orang-orang sekitar untuk turut mencintai alam, menjaga lingkungan, dan menikmati tanpa mencemari. Mapala berdiri sejak 15 Januari 2005. Organisasi ini memiliki 5 divisi (gunung, hutan, susur pantai, selam, lingkungan hidup) dan dikenal dengan program unggulan penanaman pohon serta regenerasi kepemimpinan melalui pemilihan calon ketua umum setiap tahunnya.',
-                'keywords' => 'ormawa, ukm, mapala, pencinta alam, alam, politeknik, organisasi',
+                'keywords' => 'ormawa, mapala, mapala polibatam, mahasiswa pecinta alam, organisasi mahasiswa, organisasi lingkungan, pecinta alam, polibatam',
                 'source' => 'https://www.instagram.com/mapala_polibatam?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='
             ],
             [

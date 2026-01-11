@@ -9,13 +9,13 @@
         </p>
 
         <!-- Tombol Get Started: arahkan ke LOGIN kalau belum login, ke DASHBOARD kalau sudah login -->
-        @guest
-            <a href="{{ route('login') }}" class="btn-main">Mulai Chat</a>
-        @endguest
+        <?php if(auth()->guard()->guest()): ?>
+            <a href="<?php echo e(route('login')); ?>" class="btn-main">Mulai Chat</a>
+        <?php endif; ?>
 
-        @auth
-            <a href="{{ route('dashboard') }}" class="btn-main">Mulai Chat</a>
-        @endauth
+        <?php if(auth()->guard()->check()): ?>
+            <a href="<?php echo e(route('dashboard')); ?>" class="btn-main">Mulai Chat</a>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -119,7 +119,7 @@
     </div>
 </div>
 
-{{-- JAVASCRIPT --}}
+
 
 <script>
 // ========== POLCABOT WIDGET JAVASCRIPT (FIXED) ==========
@@ -201,11 +201,11 @@
 
         try {
             // 🔧 FIX: Gunakan route widget (tanpa auth)
-            const response = await fetch('{{ route("widget.chat") }}', {
+            const response = await fetch('<?php echo e(route("widget.chat")); ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
                 },
                 body: JSON.stringify({ message: message })
             });
@@ -247,11 +247,11 @@
 
         try {
             // 🔧 FIX 1: Verify admin code first
-            const verifyResponse = await fetch('{{ route("widget.verify-admin") }}', {
+            const verifyResponse = await fetch('<?php echo e(route("widget.verify-admin")); ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
                 },
                 body: JSON.stringify({ admin_code: code })
             });
@@ -264,11 +264,11 @@
             }
 
             // 🔧 FIX 2: Add to knowledge base
-            const addResponse = await fetch('{{ route("widget.add-knowledge") }}', {
+            const addResponse = await fetch('<?php echo e(route("widget.add-knowledge")); ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
                 },
                 body: JSON.stringify({
                     admin_code: code,
@@ -357,4 +357,4 @@
         return div.innerHTML;
     }
 })();
-</script>
+</script><?php /**PATH E:\Polcabot\resources\views/components/home.blade.php ENDPATH**/ ?>
