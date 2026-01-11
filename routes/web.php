@@ -17,11 +17,35 @@ use App\Http\Controllers\Admin\JurusanController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\ConversationController;
 
+// ⭐ TAMBAHAN BARU untuk Widget
+use App\Http\Controllers\WidgetChatController;
+use App\Http\Controllers\WidgetAdminController;
+use App\Http\Controllers\Admin\KnowledgeController;
+
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('landing_page');
 
 // Contact Form
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+
+// =====================================
+// 🆕 WIDGET PUBLIC ROUTES (NO AUTH)
+// =====================================
+Route::prefix('widget')->group(function () {
+    // Chat tanpa login
+    Route::post('/chat', [WidgetChatController::class, 'chat'])
+        ->name('widget.chat');
+    
+    // Verify admin code (Public API with rate limit)
+    Route::post('/verify-admin', [WidgetAdminController::class, 'verifyCode'])
+        ->middleware('throttle:10,1')
+        ->name('widget.verify-admin');
+    
+    // Add knowledge (Public tapi butuh valid admin code)
+    Route::post('/add-knowledge', [WidgetAdminController::class, 'addKnowledge'])
+        ->middleware('throttle:20,1')
+        ->name('widget.add-knowledge');
+});
 
 // Guest Routes
 Route::middleware('guest')->group(function () {
@@ -74,6 +98,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     Route::post('/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
 
+    // 🆕 Widget Admin Code Management
+    Route::get('/widget-settings', [WidgetAdminController::class, 'settings'])->name('admin.widget.settings');
+    Route::post('/widget-settings/generate-code', [WidgetAdminController::class, 'generateNewCode'])->name('admin.widget.generate-code');
+
     // CRUD Organisasi
     Route::get('/organisasi', [OrganisasiController::class, 'index'])->name('admin.organisasi.index');
     Route::get('/organisasi/create', [OrganisasiController::class, 'create'])->name('admin.organisasi.create');
@@ -106,3 +134,4 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::put('/jurusan/{id}', [JurusanController::class, 'update'])->name('admin.jurusan.update');
     Route::delete('/jurusan/{id}', [JurusanController::class, 'destroy'])->name('admin.jurusan.destroy');
 });
+

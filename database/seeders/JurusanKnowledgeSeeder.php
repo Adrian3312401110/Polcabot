@@ -46,12 +46,6 @@ class JurusanKnowledgeSeeder extends Seeder
                 'keywords' => '',
                 'source' => ''
             ],
-            [
-                'question' => '',
-                'answer' => '',
-                'keywords' => '',
-                'source' => ''
-            ],
         ];
 
         foreach ($data as $item) {
